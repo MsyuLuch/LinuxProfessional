@@ -1,4 +1,4 @@
-# Describe VMs
+#05.08.2021 Describe VMs
 MACHINES = {
   # VM name "kernel update"
   :"kernel-update" => {
