@@ -26,7 +26,7 @@
 - `readme.md` - описание процесса выполнения домашнего задания
 - `Vagrantfile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
 
-Ссылка на обновленный образ в Vagrant Cloud https://github.com/MsyuLuch/LinuxProfessional/tree/main/homework-1
+Ссылка на обновленный образ в Vagrant Cloud https://app.vagrantup.com/MsyuLuch/boxes/centos-7-5
 
 ---
 # **Описание процесса выполнения домашнего задания №1**
