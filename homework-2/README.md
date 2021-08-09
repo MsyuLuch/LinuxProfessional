@@ -9,38 +9,60 @@
 - **mdadm** - утилита для работы с программными RAID-массивами различных уровней; 
 - **Git** - система контроля версий
 
-- **Ссылка на репозиторий** - https://github.com/
-- **Vagrant Cloud** - https://app.vagrantup.com
-
 # **Цель**
  
-Результатом данной работы будет создание кастомного образа centos/7 с обновленным ядром и его публикация в Vagrant Cloud.
+Работа с mdadm:
+
+- добавить в Vagrantfile еще дисков;
+- сломать/починить raid;
+- собрать R0/R5/R10 на выбор;
+- прописать собранный рейд в конф, чтобы рейд собирался при загрузке;
+- создать GPT раздел и 5 партиций.
  
 # **Исходные данные**
 
-Ссылка на проект https://github.com/MsyuLuch/LinuxProfessional/tree/main/homework-1
+Ссылка на проект https://github.com/MsyuLuch/LinuxProfessional/tree/main/homework-2
 
 Здесь:
 - `readme.md` - описание процесса выполнения домашнего задания
-- `Vagrantfile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
-
-Ссылка на обновленный образ в Vagrant Cloud https://app.vagrantup.com/MsyuLuch/boxes/centos-7-5
+- `Vagrantfile` - файл описывающий виртуальную инфраструктуру для `Vagrant` (сразу собирает систему с подключенным рейдом и смонтированными разделами)
+- `Script.sh` - скрипт для создания рейда, конф для автосборки рейда при загрузке
 
 ---
-# **Описание процесса выполнения домашнего задания №1**
+# **Описание процесса выполнения домашнего задания №2**
 
 # **1. Kernel update**
 
-### **1.1 Клонирование и запуск**
+Добавим в VagrantFile 5 дисков для сборки RAID5:
 
-Клонируем репозиторий:
 ```
-git clone https://github.com/dmitry-lyutenko/manual_kernel_update
+:disks => {
+        :sata1 => {
+            :dfile => './sata1.vdi',
+            :size => 250,
+            :port => 1
+        },
+        :sata2 => {
+            :dfile => './sata2.vdi',
+            :size => 250,
+            :port => 2
+        },
+        :sata3 => {
+            :dfile => './sata3.vdi',
+            :size => 250,
+            :port => 3
+        },
+        :sata4 => {
+            :dfile => './sata4.vdi',
+            :size => 250,
+            :port => 4
+        },
+      :sata5 => {
+            :dfile => './sata5.vdi',
+            :size => 250,
+            :port => 5
+        }
 ```
-Здесь:
-- `manual` - директория с руководством по выполнению домашнего задания
-- `packer` - директория со скриптами для `packer`'а
-- `Vagrantfile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
 
 Запускаем виртуальную машину и логинимся:
 ```
@@ -48,97 +70,81 @@ vagrant up
 vagrant ssh
 ```
 
-### **1.2 kernel update**
-
-Подключаем репозиторий, для обновления ядра.
+Утилиты mdadm, smartmontools, hdparm, gdisk ставятся автоматически при старте ВМ:
 ```
-sudo yum install -y http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
-```
-
-В репозитории есть две версии ядер:
- - `kernel-ml` - наиболее свежая стабильная версия.
- - `kernel-lt` - стабильная версия с длительной поддержкой, но менее свежая, чем первая.
-
-Ставим последнее ядро:
-```
-sudo yum --enablerepo elrepo-kernel install kernel-ml -y
+box.vm.provision "shell", inline: <<-SHELL
+	      mkdir -p ~root/.ssh
+              cp ~vagrant/.ssh/auth* ~root/.ssh
+	      yum install -y mdadm smartmontools hdparm gdisk
+  	  SHELL
 ```
 
-### **1.3 grub update**
-
-Обновляем конфигурацию загрузчика:
+Занулим на всякий случай суперблоки:
 ```
-sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+mdadm --zero-superblock --force /dev/sd{b,c,d,e,f}
 ```
-Выбираем загрузку с новым ядром по-умолчанию:
+Создаем RAID5:
 ```
-sudo grub2-set-default 0
+mdadm --create --verbose /dev/md0 -l 5 -n 5 /dev/sd{b,c,d,e,f}
 ```
-Перезагружаем виртуальную машину:
+Проверяем собранный RAID5:
 ```
-sudo reboot
+cat /proc/mdstat
+mdadm -D /dev/md0
 ```
-Проверяем версию ядра:
+Создание конфигурационного файла mdadm.conf:
 ```
-uname -r
+echo "DEVICE partitions" > /etc/mdadm/mdadm.conf
+mdadm --detail --scan --verbose | awk '/ARRAY/ {print}' >> /etc/mdadm/mdadm.conf
 ```
-
----
-
-# **2. Packer**
-
-### **2.1 packer build**
-Создаем свой образ системы, с уже установленым ядром 5й версии.
-В директории `packer` выполняем команду:
+Создаем раздел GPT на RAID с помощью утилиты parted
 ```
-packer build centos.json
+parted -s /dev/md0 mklabel gpt
 ```
-
-### **2.2 vagrant init (тестирование)**
-Импортируем образ в `vagrant`:
+Создаем партиции
 ```
-vagrant box add --name centos-7-5 centos-7.7.1908-kernel-5-x86_64-Minimal.box
+parted /dev/md0 mkpart primary ext4 0% 20%
+parted /dev/md0 mkpart primary ext4 20% 40%
+parted /dev/md0 mkpart primary ext4 40% 60%
+parted /dev/md0 mkpart primary ext4 60% 80%
+parted /dev/md0 mkpart primary ext4 80% 100%
 ```
-Проверияем его в списке имеющихся образов:
+Cоздаем файловые системы ext4 на разделах
 ```
-vagrant box list
-centos-7-5            (virtualbox, 0)
+for i in $(seq 1 5); do sudo mkfs.ext4 /dev/md0p$i; done
 ```
-Создаем новый Vagrantfile, можно использовать имеющийся. 
+Монтируем их по каталогам:
 ```
-vagrant init centos-7-5
+mkdir -p /raid/part{1,2,3,4,5}
+ for i in $(seq 1 5); do mount /dev/md0p$i /raid/part$i; done
 ```
-Запускаем виртуальную машину, подключаемся к ней и проверяем версию ядра:
-
+Если всё прошло удачно собираем все действия по созданию RAID5 и разделов в скрипт https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-2/script.sh
+Проверяем работу скрипта на ВМ собранной с нуля, с помощью VagrantFile https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-2/VagrantFile
+Теперь можно перенести команды по созданию RAID5 в VagrantFile:
 ```
-vagrant up
-vagrant ssh    
-uname -r
+       box.vm.provision "shell", inline: <<-SHELL
+            mkdir -p ~root/.ssh
+                cp ~vagrant/.ssh/auth* ~root/.ssh
+            yum install -y mdadm smartmontools hdparm gdisk
+            mdadm --zero-superblock --force /dev/sd{b,c,d,e,f}
+            mdadm --create --verbose --force /dev/md0 -l 5 -n 5 /dev/sd{b,c,d,e,f}
+            cat /proc/mdstat
+            mkdir /etc/mdadm/
+            echo "DEVICE partitions" > /etc/mdadm/mdadm.conf
+            mdadm --detail --scan --verbose | awk '/ARRAY/ {print}' >> /etc/mdadm/mdadm.conf
+            parted -s /dev/md0 mklabel gpt
+            parted /dev/md0 mkpart primary ext4 0% 20%
+            parted /dev/md0 mkpart primary ext4 20% 40%
+            parted /dev/md0 mkpart primary ext4 40% 60%
+            parted /dev/md0 mkpart primary ext4 60% 80%
+            parted /dev/md0 mkpart primary ext4 80% 100%
+            for i in $(seq 1 5); do sudo mkfs.ext4 /dev/md0p$i; done
+            mkdir -p /raid/part{1,2,3,4,5}
+            for i in $(seq 1 5); do mount /dev/md0p$i /raid/part$i; done
+            echo "#RAID" >> /etc/fstab
+            for i in $(seq 1 5); do echo `sudo blkid /dev/md0p$i | awk '{print $2}'` /u0$i ext4 defaults 0 0 >> /etc/fstab; done
+            sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+            systemctl restart sshd
+        SHELL
 ```
-Удаляем тестовый образ из локального хранилища:
-```
-vagrant box remove centos-7-5
-```
----
-# **3. Vagrant cloud**
-
-Логинимся в `vagrant cloud`:
-```
-vagrant cloud auth login
-Vagrant Cloud username or email: <user_email>
-Password (will be hidden): 
-Token description (Defaults to "Vagrant login from DS-WS"):
-You are now logged in.
-```
-Публикуем полученный бокс:
-```
-vagrant cloud publish --release <username>/centos-7-5 1.0 virtualbox \
-        centos-7.7.1908-kernel-5-x86_64-Minimal.box
-```
-Здесь:
- - `cloud publish` - загрузить образ в облако;
- - `release` - указывает на необходимость публикации образа после загрузки;
- - `<username>/centos-7-5` - `username`, указаный при публикации и имя образа;
- - `1.0` - версия образа;
- - `virtualbox` - провайдер;
- - `centos-7.7.1908-kernel-5-x86_64-Minimal.box` - имя файла загружаемого образа;
+ссылка на новый Vagrantfile 
