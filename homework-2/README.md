@@ -98,7 +98,7 @@ mdadm --detail --scan --verbose | awk '/ARRAY/ {print}' >> /etc/mdadm/mdadm.conf
 ```
 parted -s /dev/md0 mklabel gpt
 ```
-Делим его на 5 одинаковых разделов:
+Делим его на 5 одинаковых партиций:
 ```
 parted /dev/md0 mkpart primary ext4 0% 20%
 parted /dev/md0 mkpart primary ext4 20% 40%
@@ -106,7 +106,7 @@ parted /dev/md0 mkpart primary ext4 40% 60%
 parted /dev/md0 mkpart primary ext4 60% 80%
 parted /dev/md0 mkpart primary ext4 80% 100%
 ```
-С помощью команды mkfs.ext4 создаем файловые системы ext4 на каждом разделе:
+С помощью команды mkfs.ext4 создаем файловые системы ext4 на каждой партиции:
 ```
 for i in $(seq 1 5); do sudo mkfs.ext4 /dev/md0p$i; done
 ```
