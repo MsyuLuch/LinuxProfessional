@@ -8,6 +8,7 @@ mdadm --create --verbose --force /dev/md0 -l 5 -n 5 /dev/sd{b,c,d,e,f}
 
 # Проверяем, что получилось
 cat /proc/mdstat
+mdadm -D /dev/md0
 
 # Создаем конфигурационный файл mdadm.conf в директории /etc/mdadm/
 mkdir /etc/mdadm/
