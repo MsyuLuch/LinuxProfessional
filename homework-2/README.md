@@ -31,8 +31,6 @@
 ---
 # **Описание процесса выполнения домашнего задания №2**
 
-# **1. Kernel update**
-
 Добавим в VagrantFile 5 дисков для сборки RAID5:
 
 ```
@@ -78,12 +76,11 @@ box.vm.provision "shell", inline: <<-SHELL
 	      yum install -y mdadm smartmontools hdparm gdisk
   	  SHELL
 ```
-
 Занулим на всякий случай суперблоки:
 ```
 mdadm --zero-superblock --force /dev/sd{b,c,d,e,f}
 ```
-Создаем RAID5:
+Создаем RAID5 ( Опция -l):
 ```
 mdadm --create --verbose /dev/md0 -l 5 -n 5 /dev/sd{b,c,d,e,f}
 ```
@@ -92,16 +89,16 @@ mdadm --create --verbose /dev/md0 -l 5 -n 5 /dev/sd{b,c,d,e,f}
 cat /proc/mdstat
 mdadm -D /dev/md0
 ```
-Создание конфигурационного файла mdadm.conf:
+Создаем конфигурационный файл mdadm.conf:
 ```
 echo "DEVICE partitions" > /etc/mdadm/mdadm.conf
 mdadm --detail --scan --verbose | awk '/ARRAY/ {print}' >> /etc/mdadm/mdadm.conf
 ```
-Создаем раздел GPT на RAID с помощью утилиты parted
+С помощью утилиты parted создаем раздел GPT на RAID:
 ```
 parted -s /dev/md0 mklabel gpt
 ```
-Создаем партиции
+Делим его на 5 одинаковых разделов:
 ```
 parted /dev/md0 mkpart primary ext4 0% 20%
 parted /dev/md0 mkpart primary ext4 20% 40%
@@ -109,7 +106,7 @@ parted /dev/md0 mkpart primary ext4 40% 60%
 parted /dev/md0 mkpart primary ext4 60% 80%
 parted /dev/md0 mkpart primary ext4 80% 100%
 ```
-Cоздаем файловые системы ext4 на разделах
+Cоздаем файловые системы ext4 на каждом разделе:
 ```
 for i in $(seq 1 5); do sudo mkfs.ext4 /dev/md0p$i; done
 ```
@@ -118,8 +115,21 @@ for i in $(seq 1 5); do sudo mkfs.ext4 /dev/md0p$i; done
 mkdir -p /raid/part{1,2,3,4,5}
  for i in $(seq 1 5); do mount /dev/md0p$i /raid/part$i; done
 ```
+Заносим информацию о вновь созданных разделах в fstab, чтобы после перезагрузки, разделы автоматически примонтировались:
+```
+echo "#RAID" >> /etc/fstab
+for i in $(seq 1 5); do echo `sudo blkid /dev/md0p$i | awk '{print $2}'` /u0$i ext4 defaults 0 0 >> /etc/fstab; done
+```
+В результате в файле /ect/fstab будут строки следующего вида:
+```
+UUID="8fc9d795-640d-4886-9ec0-b41583608314" /u01 ext4 defaults 0 0
+```
+где UUID уникальный номер каждого раздела
+
 Если всё прошло удачно собираем все действия по созданию RAID5 и разделов в скрипт https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-2/script.sh
+
 Проверяем работу скрипта на ВМ собранной с нуля, с помощью VagrantFile https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-2/VagrantFile
+
 Теперь можно перенести команды по созданию RAID5 в VagrantFile:
 ```
        box.vm.provision "shell", inline: <<-SHELL
@@ -147,4 +157,4 @@ mkdir -p /raid/part{1,2,3,4,5}
             systemctl restart sshd
         SHELL
 ```
-ссылка на новый Vagrantfile 
+ссылка на новый Vagrantfile https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-2/new/VagrantFile
