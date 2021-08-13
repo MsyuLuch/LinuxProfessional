@@ -34,7 +34,7 @@
 Здесь:
 - `readme.md` - описание процесса выполнения домашнего задания
 - `Vagrantfile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
-- `history_log_copy.txt` - log терминальной сессии
+- `history_log.txt` - log терминальной сессии
 
 ---
 # **Описание процесса выполнения домашнего задания №3**
@@ -75,7 +75,7 @@ vgcreate vg_root /dev/sdb
 lvcreate -n lv_root -l +100%FREE /dev/vg_root
 ```
 
-Создаем на lv_root файловую систему и смонтируем его, чтобы перенести туда данные:
+Создаем на lv_root файловую систему и смонтируем LV, чтобы перенести туда данные:
 
 ```
 mkfs.xfs /dev/vg_root/lv_root
@@ -131,7 +131,7 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 cd /boot ; for i in `ls initramfs-*img`; do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force; done
 ```
 
-Для того, чтобы при загрузке был смонтирован нужный \, необходимо в файле
+Для того, чтобы при загрузке был смонтирован нужный /, необходимо в файле
 /boot/grub2/grub.cfg заменить rd.lvm.lv=VolGroup00/LogVol00 на rd.lvm.lv=vg_root/lv_root
 
 Перезагружаемся с новым / томом:
@@ -162,7 +162,7 @@ tmpfs                       tmpfs     118M     0  118M   0% /sys/fs/cgroup
 tmpfs                       tmpfs      24M     0   24M   0% /run/user/1000
 ```
 
-Изменим размер старой VG и вернем на него \. 
+Изменим размер старой VG и вернем на него /. 
 Для этого удаляем старый LV размеров в 40G и создаем новый на 8G:
 
 ```
@@ -170,7 +170,7 @@ lvremove /dev/VolGroup00/LogVol00
 lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
 ```
 
-Создаем на вновь созданном LV файловую систему, монтируем его в /mnt, переносим данные с /dev/vg_root/lv_root в /mnt
+Создаем на вновь созданном LV файловую систему, монтируем в /mnt, переносим данные с /dev/vg_root/lv_root в /mnt
 
 ```
 mkfs.xfs /dev/VolGroup00/LogVol00
@@ -191,21 +191,21 @@ s/.img//g"` --force; done
 
 ***Выделить том под /var в зеркало***
 
-На свободных дисках создаем зеркало:
+На свободных дисках создаем зеркало m1 (/dev/sdc, /dev/sdd):
 
 ```
 pvcreate /dev/sdc /dev/sdd
 vgcreate vg_var /dev/sdc /dev/sdd
 lvcreate -L 950M -m1 -n lv_var vg_var
 ```
-Создаем на вновь созданном LV файловую систему и перемещаем туда /var:
+Создаем на вновь созданном LV файловую систему и перемещаем туда /var, после чего каталог можно очистить:
 ```
 mkfs.ext4 /dev/vg_var/lv_var
 mount /dev/vg_var/lv_var /mnt
 cp -aR /var/* /mnt/ 
 ```
 
-Монтируем новую var в каталог /var:
+Монтируем новую var (/dev/vg_var/lv_var) в каталог /var:
 
 ```
 umount /mnt
@@ -300,13 +300,13 @@ UUID="8ba87846-3bdb-4167-b123-475b3874ef8a" /home xfs defaults 0 0
 Сгенерируем файлы в /home/:
 
 ```
- touch /home/file{1..20}
+touch /home/file{1..20}
 ```
 
-Снимаем снапшот:
+Снимаем снапшот (опция -s):
 
 ```
- lvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home
+lvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home
 ```
 
 Удаляем часть файлов:
