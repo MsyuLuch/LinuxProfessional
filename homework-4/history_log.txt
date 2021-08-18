@@ -165,8 +165,6 @@ drwxr-xr-x. 3 root    root          3 Aug 18 06:55 ..
 drwxr-xr-x. 3 vagrant vagrant       4 Dec 18  2017 task1
 -rw-r--r--. 1 root    root    1209374 May  6  2016 War_and_Peace.txt
 -rw-r--r--. 1 root    root     398635 May 15  2020 world.sql
-
-
 [root@server otus]# find -name secret_message
 ./hometask2/task1/file_mess/secret_message
 [root@server otus]# cat ./hometask2/task1/file_mess/secret_message
