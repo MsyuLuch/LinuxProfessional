@@ -80,7 +80,7 @@ errors: No known data errors
 NAME      USED  AVAIL     REFER  MOUNTPOINT
 storage  82.5K   832M       24K  /storage
 ```
-Создаем файловую систему ZFS (названия выбираем в соответствии с алгоритмом сжатия, который будем использовать в дальнейшем):
+Создаем файловые системы ZFS (названия выбираем в соответствии с алгоритмом сжатия, который будем использовать в дальнейшем):
 ```
 #zfs create storage/fs-lzjb
 #zfs create storage/fs-zle
@@ -95,7 +95,8 @@ storage  82.5K   832M       24K  /storage
 - lz4 - обеспечивает лучшее сжатие с меньшими затратами процессора
 - lzjb - оптимизирован для производительности, обеспечивая при этом достойное сжатие
 - zle - кодирование нулевой длины полезно для наборов данных с большими блоками нулей
-Установим на каждой файловой системе свой алгоритм сжатия.
+
+Установим на каждой файловой системе свой алгоритм сжатия:
 ```
 # zfs set compression=lzjb storage/fs-lzjb
 # zfs set compression=zle storage/fs-zle
@@ -261,7 +262,7 @@ compression - zle
 
 ***Найти сообщение от преподавателей***
 
-Скопировать файл из удаленной директории https://drive.google.com/file/d/1gH8gCL9y7Nd5Ti3IRmplZPF1XjzxeRAG/view?usp=sharing. 
+Скопируем файл из удаленной директории https://drive.google.com/file/d/1gH8gCL9y7Nd5Ti3IRmplZPF1XjzxeRAG/view?usp=sharing. 
 Файл был получен командой:
 ```
 zfs send otus/storage@task2 > otus_task2.file
