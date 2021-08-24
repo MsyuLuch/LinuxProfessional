@@ -38,7 +38,7 @@ NFS:
 ```
 #!/bin/bash
 
-# директория, которую будем расшаривать
+# директория, которую будем экспортировать
 SHARE_DIR=/var/nfs_share_v3
 
 # выключаем selinux
@@ -52,7 +52,7 @@ __EOF
 # устанавливаем NFS сервер
 yum install nfs-utils -y
 
-# создаем директорию для расшаривания и даем на нее права всем на запись
+# создаем файловую систему для экспорта или совместного использования на сервере NFS и даем всем права на запись
 mkdir $SHARE_DIR
 chmod o+w $SHARE_DIR
 
@@ -100,7 +100,7 @@ firewall-cmd --add-port=32803/tcp
 ```
 #!/bin/bash
 
-# директория, которую будем расшаривать
+# директория, которую будем экспортировать
 SHARE_DIR=/var/nfs_share
 
 # выключаем selinux
@@ -114,7 +114,7 @@ __EOF
 # устанавливаем NFS сервер
 yum install nfs-utils -y
 
-# создаем директорию для расшаривания и даем на нее права всем на запись
+# создаем файловую систему для экспорта или совместного использования на сервере NFS и даем всем права на запись
 mkdir $SHARE_DIR
 chmod o+w $SHARE_DIR
 
@@ -192,7 +192,7 @@ mount -t nfs -o vers=3,proto=udp $SHARE_DIR_v3 $MNT_DIR_v3
 # добавляем строку (опции монтирования прописываем дополнительно) в файл fstab для автоматического монтирования при старте ВМ
 echo ${SHARE_DIR_v3} ${MNT_DIR_v3} nfs vers=3,proto=udp defaults 0 0 >> /etc/fstab
 ```
-Авторизуемся на клиенте и попробуем создать файл и проверить появился ли он на сервере:
+Авторизуемся на клиенте и попробуем создать файл и проверить появился ли он на сервере. Можно дополнительно выполнить обратную операцию, создать файл на сервере и проверить, появился ли он на клиенте:
 ```
 [root@client vagrant]# touch /mnt/nfs_share_v3/file1
 [root@client vagrant]# touch /mnt/nfs_share/file1
@@ -208,4 +208,13 @@ total 0
 drwxr-xrwx.  2 root      root       32 Aug 24 01:44 .
 drwxr-xr-x. 19 root      root      274 Aug 24 00:56 ..
 -rw-r--r--.  1 nfsnobody nfsnobody   0 Aug 24 01:43 file1
+```
+Выведем статистическую информацию об экспортируемых системах на клиенте:
+````
+# nfsstat -m
+    /mnt/nfs_share from 10.0.0.41:/var/nfs_share
+     Flags: rw,relatime,vers=4.2,rsize=131072,wsize=131072,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.0.0.40,local_lock=none,addr=10.0.0.41
+    
+    /mnt/nfs_share_v3 from 10.0.0.42:/var/nfs_share_v3
+     Flags: rw,relatime,vers=3,rsize=32768,wsize=32768,namlen=255,hard,proto=udp,timeo=11,retrans=3,sec=sys,mountaddr=10.0.0.42,mountvers=3,mountport=20048,mountproto=udp,local_lock=none,addr=10.0.0.42
 ```
