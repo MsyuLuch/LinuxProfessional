@@ -1,0 +1,57 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'open3'
+require 'fileutils'
+
+Vagrant.configure("2") do |config|
+
+    config.vm.define "serverv3" do |serverv3|
+    serverv3.vm.box = 'centos/7'
+    serverv3.vbguest.installer_options = { allow_kernel_upgrade: true }
+    serverv3.vm.host_name = 'nfsv3'
+    serverv3.vm.synced_folder ".", "/vagrant", disabled: true
+    serverv3.vm.network :private_network, ip: "10.0.0.42"
+    serverv3.vm.provider :virtualbox do |vb|
+      vb.memory = "1024"
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+  serverv3.vm.provision "shell",
+    name: "configuration",
+    path: "init_server_v3.sh"
+  end
+
+  config.vm.define "server" do |server|
+  config.vm.box = 'centos/8.4'
+  config.vm.box_url = 'http://cloud.centos.org/centos/8/vagrant/x86_64/images/CentOS-8-Vagrant-8.4.2105-20210603.0.x86_64.vagrant-virtualbox.box'
+
+  server.vm.host_name = 'server'
+  server.vm.network :private_network, ip: "10.0.0.41"
+
+  server.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+
+
+  server.vm.provision "shell",
+    name: "configuration",
+    path: "init_server.sh"
+  end
+
+  config.vm.define "client" do |client|
+    client.vm.box = 'centos/8.4'
+    client.vm.host_name = 'client'
+    client.vm.network :private_network, ip: "10.0.0.40"
+    client.vm.provider :virtualbox do |vb|
+      vb.memory = "1024"
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+  client.vm.provision "shell",
+    name: "configuration",
+    path: "init_client.sh"
+  end
+
+end
