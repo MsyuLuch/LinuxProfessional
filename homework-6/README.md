@@ -64,12 +64,14 @@ rpmdev-setuptree
   
   h — показывать статус установки.
 ```
-wget https://nginx.org/packages/centos/7/SRPMS/nginx-1.14.1-1.el7_4.ngx.src.rpm && rpm -Uvh nginx-1.14.1-1.el7_4.ngx.src.rpm
+wget https://nginx.org/packages/centos/7/SRPMS/nginx-1.14.1-1.el7_4.ngx.src.rpm \
+&& rpm -Uvh nginx-1.14.1-1.el7_4.ngx.src.rpm
 ```
 
 Заменим spec файл на свой откорректированный:
 ```
-wget https://raw.githubusercontent.com/MsyuLuch/LinuxProfessional/main/homework-6/nginx.spec && mv -f nginx.spec rpmbuild/SPECS/nginx.spec
+wget https://raw.githubusercontent.com/MsyuLuch/LinuxProfessional/main/homework-6/nginx.spec \
+&& mv -f nginx.spec rpmbuild/SPECS/nginx.spec
 ```
 
 Собираем установочный RPM-пакет:
@@ -89,7 +91,8 @@ systemctl start nginx && systemctl enable nginx
 
 Создаем директорию, где будет расположен наш репозиторий и переносим в неё собранный пакет NGINX:
 ```
-mkdir /usr/share/nginx/html/repo && cp rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm /usr/share/nginx/html/repo/
+mkdir /usr/share/nginx/html/repo \
+&& cp rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm /usr/share/nginx/html/repo/
 ```
 
 Выполняем команду создания репозитория в созданной директории:
