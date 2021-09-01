@@ -43,7 +43,7 @@ zlib-devel \
 pcre-devel
 ```
 
-Скачиваем и разархивируем исходники последнего openssl:
+Скачиваем и разархивируем исходники последнего `openssl`:
 ```
 wget https://www.openssl.org/source/latest.tar.gz && tar -xvf latest.tar.gz
 ```
@@ -53,11 +53,15 @@ wget https://www.openssl.org/source/latest.tar.gz && tar -xvf latest.tar.gz
 rpmdev-setuptree
 ```
 
-Скачиваем src-пакета NGINX и устанавливаем
+Скачиваем src-пакета NGINX и устанавливаем.
+
 Для установки собранного пакета вводим команду:
-  rpm -Uvh <путь до собранного пакета>:
+  `rpm -Uvh <путь до собранного пакета>`:
+  
   U — обновить, если пакет уже установлен в системе.
+  
   v — вывод информации о ходе процесса.
+  
   h — показывать статус установки.
 ```
 wget https://nginx.org/packages/centos/7/SRPMS/nginx-1.14.1-1.el7_4.ngx.src.rpm && rpm -Uvh nginx-1.14.1-1.el7_4.ngx.src.rpm
@@ -93,7 +97,7 @@ mkdir /usr/share/nginx/html/repo && cp rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4
 createrepo /usr/share/nginx/html/repo/
 ```
 
-Добавляем в конфиг файл NGINX строку 'autoindex on;' и перезагружаем NGINX:
+Добавляем в конфиг файл NGINX строку `autoindex on;` и перезагружаем NGINX:
 ```
 sed -i 's/location \/ {/location \/ {\n autoindex on;/g' /etc/nginx/conf.d/default.conf
 nginx -s reload
@@ -104,7 +108,7 @@ nginx -s reload
 curl -a http://localhost/repo/
 ```
 
-Добавляем ссылку на наш репозиторий и проверяем его доступность командой 'yum repolist enabled':
+Добавляем ссылку на наш репозиторий и проверяем его доступность командой `yum repolist enabled`:
 ```
 cat >> /etc/yum.repos.d/otus.repo << EOF
 [otus]
