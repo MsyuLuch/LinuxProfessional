@@ -79,7 +79,7 @@ sda                      8:0    0   64G  0 disk
 
 ```
 
-Выполняем скрипт `rn-root-vg.sh` с правами администратора.
+Выполняем скрипт `rn-root-vg.sh` с правами администратора. Можно перезагрузиться и проверить результат.
 
 ***Описание работы скрипта***
 
@@ -88,7 +88,7 @@ sda                      8:0    0   64G  0 disk
 vgrename ${oldvg} ${newvg}
 ```
 
-Необходимо изменить точки монтирования в системе: 
+Необходимо изменить точки монтирования в системе в файле `/etc/fstab` : 
 ```
 sed -i "s/${oldvg}/${newvg}/g" /etc/fstab
 sed -i "s/${oldvgdash}/${newvgdash}/g" /etc/fstab
@@ -117,10 +117,12 @@ swapoff -a && swapon -a
 
 dracut - утилита создания initramfs (initial RAM disk image, загружаемый в оперативную память файл с образом файловой системы), используемого при загрузке Linux в качестве первоначальной корневой файловой системы. 
 
-Создаем свою директорию для нового модуля в `/usr/lib/dracut/modules.d/` и добавляем в не1 два скрипта `module-setup.sh` и `test.sh`:
+Создаем свою директорию для нового модуля в `/usr/lib/dracut/modules.d/` и добавляем в неё два скрипта `module-setup.sh` и `test.sh`:
 ```
 mkdir /usr/lib/dracut/modules.d/01test
 cd /usr/lib/dracut/modules.d/01test
+```
+```
 cat >module-setup.sh<<EOF
 
 #------------------------------------------------
