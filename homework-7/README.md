@@ -19,9 +19,12 @@
 
 Здесь:
 - `readme.md` - описание процесса выполнения домашнего задания
+ 2. Установить систему с LVM, после чего переименовать VG
 - `Vagrantfile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
-- `build.sh` - скрипт сборки пакета и создания репозитория
-- `nginx.spec` - отредактированный spec-файл
+- `rn-root-vg.sh` - скрипт для переименования VG основного раздела
+ 3. Добавить модуль в initrd
+- `Vagrantfile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
+- `add-module.sh` - скрипт для добавления модуля в initrd
 
 # **Описание процесса выполнения домашнего задания №7**
 
@@ -30,22 +33,27 @@
 Включите сервер CentOS.
 Когда появится загрузочное меню GRUB, выберите версию ядра, которую вы хотите загрузить, 
 и нажмите `e`, чтобы отредактировать выбранную загрузочную запись.
-Замените параметр `ro` на `rw init=/sysroot/bin/sh`
+Внесите изменения в загрузочную запись,добавив `rd.break`
 Нажмите `Ctrl + x`, чтобы войти в аварийный, однопользовательский режим.
 Введите следующую команду для монтирования корневой файловой системы (/) в режиме чтения/записи:
 ```
+mount -o remount,rw /sysroot
+```
+Перейдите в каталог `/sysroot` и сбросьте пароль `root`.
+```
 chroot /sysroot/
 ```
-Измените пароль пользователя root:
+Измените пароль пользователя `root`:
 ```
 passwd root
 ```
-После обновления пароля root введите следующую команду, чтобы включить перемаркировку SELinux при перезагрузке:
+После обновления пароля `root` введите следующую команду, чтобы включить перемаркировку SELinux при перезагрузке:
 ```
 touch /.autorelabel
 ```
 Далее необходимо перезагрузить сервер CentOS в обычном режиме:
 ```
+exit
 exit
 reboot
 ```
@@ -53,26 +61,118 @@ reboot
 Это займет некоторое время в зависимости от размера файловой системы и скорости вашего жесткого диска.
 После завершения перемаркировки файловой системы вы можете войти на сервер CentOS 8 с новым паролем root!
 
-https://voxlink.ru/kb/linux/kak-sbrosit-zabytyj-parol-root-v-rhel-centos-i-fedora/
-https://vk.com/@over_view-sbros-parolya-polzovatelya-root-v-centos-8-rhel-8
-
 ***2. Установить систему с LVM, переименовать VG***
-https://forums.centos.org/viewtopic.php?f=47&t=62406&sid=dae6bd2fb670ad27853db2a817bbe532&start=10
-https://qastack.ru/ubuntu/765058/how-do-you-rename-the-volume-group-that-contains-the-root-volume-in-lvm
-https://unix.stackexchange.com/questions/574181/lvm-renaming-a-volume-group-and-ensuring-system-can-boot
-https://stackoverflow.com/questions/49822594/vagrant-how-to-specify-the-disk-size
-https://www.atktng.dev/en/post/vagrant-extend-disksize/
-https://medium.com/@kanrangsan/how-to-automatically-resize-virtual-box-disk-with-vagrant-9f0f48aa46b3
+
+Запускаем ВМ и проверяем текущие настройки:
 
 ```
-vgrename /dev/vg02 /dev/my_volume_group
+# lsblk
+NAME                   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                      8:0    0   64G  0 disk
+└─sda1                   8:1    0   64G  0 part
+  ├─vagrant--vg-root   253:0    0   63G  0 lvm  /
+  └─vagrant--vg-swap_1 253:1    0  980M  0 lvm  [SWAP]
 
-clear;echo '';echo "    Change Volume Group name...";echo '';old_name=$(vgs --noheadings -o vg_name | tr -d '  '); echo "    Current VG name: ${old_name}"; echo -n "    Enter a new VG name (leave blank to quit, no changes) > ";read new_name; if [ "${new_name}" = "" ] || [ "${new_name}" = "${old_name}" ]; then echo -e "\n    Nothing to do, quitting...\n";else echo -n "    Make backup of \"initramfs-$(uname -r).img\" [Y|n]: "; read bak; if [ "${bak}" = "y" ] || [ "${bak}" = "Y" ] || [ "${bak}" = "" ]; then cp /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r).img.bak;fi; echo -e "\n\n"; vgrename -v $old_name $new_name; sed -i "s/\/${old_name}-/\/${new_name}-/g" /etc/fstab; echo '    '; sed -i "s/\([/=]\)${old_name}\([-/]\)/\1${new_name}\2/g" /boot/grub2/grub.cfg; dracut -f -v /boot/initramfs-$(uname -r).img $(uname -r);  echo ""; echo "    Done..."; echo "    A reboot is required.  Scan the above output before continuing."; echo -e "    Brought to you by ITI Studios http://CanadianDomainRegistry.ca\n";  echo -n "    Reboot now [Y|n] >"; read reboot; if [ "${reboot}" = "y" ] || [ "${reboot}" = "Y" ] || [ "${reboot}" = "" ]; then systemctl reboot -f; else echo "";echo "    *You must reboot to save these settings, at the prompt enter: systemctl reboot -f"; echo "";fi;fi;  # End of script
+# vgs
+  VG         #PV #LV #SN Attr   VSize   VFree
+  vagrant-vg   1   2   0 wz--n- <64.00g    0
 
-vgrename -v $old_name $new_name;
-sed -i "s/\/${old_name}-/\/${new_name}-/g" /etc/fstab;
-sed -i "s/\([/=]\)${old_name}\([-/]\)/\1${new_name}\2/g" /boot/grub2/grub.cfg;
-dracut -f -v /boot/initramfs-$(uname -r).img $(uname -r);
-systemctl reboot -f;
 ```
+
+Выполняем скрипт `rn-root-vg.sh` с правами администратора.
+
+***Описание работы скрипта***
+
+Чтобы переименовать VG используем команду
+```
+vgrename ${oldvg} ${newvg}
+```
+
+Необходимо изменить точки монтирования в системе: 
+```
+sed -i "s/${oldvg}/${newvg}/g" /etc/fstab
+sed -i "s/${oldvgdash}/${newvgdash}/g" /etc/fstab
+```
+Обновим VG в конфигурационных файлах GRUB:
+```
+sed -i "s/${oldvg}/${newvg}/g" /boot/grub/grub.cfg
+sed -i "s/${oldvgdash}/${newvgdash}/g" /boot/grub/grub.cfg
+
+sed -i "s/${oldvg}/${newvg}/g" /boot/grub/menu.lst
+sed -i "s/${oldvgdash}/${newvgdash}/g" /boot/grub/menu.lst
+
+sed -i "s/${oldvg}/${newvg}/g" /etc/initramfs-tools/conf.d/resume
+sed -i "s/${oldvgdash}/${newvgdash}/g" /etc/initramfs-tools/conf.d/resume
+```
+Обновим существующий образ ядра с новыми настройками:
+```
+update-initramfs -c -k all
+```
+Освободим swap (чтобы можно было перезагрузить систему с новыми параметрами):
+```
+swapoff -a && swapon -a
+```
+
 ***3. Добавить модуль в initrd***
+
+dracut - утилита создания initramfs (initial RAM disk image, загружаемый в оперативную память файл с образом файловой системы), используемого при загрузке Linux в качестве первоначальной корневой файловой системы. 
+
+Создаем свою директорию для нового модуля в `/usr/lib/dracut/modules.d/` и добавляем в не1 два скрипта `module-setup.sh` и `test.sh`:
+```
+mkdir /usr/lib/dracut/modules.d/01test
+cd /usr/lib/dracut/modules.d/01test
+cat >module-setup.sh<<EOF
+
+#------------------------------------------------
+#!/bin/bash
+
+check() {
+     return 0
+}
+depends() {
+     return 0
+}
+install() {
+     inst_hook cleanup 00 "/usr/lib/dracut/modules.d/01test/test.sh"
+}
+#------------------------------------------------
+EOF
+```
+
+```
+cat >test.sh<<EOF
+#------------------------------------------------
+#!/bin/bash
+exec 0<>/dev/console 1<>/dev/console 2<>/dev/console
+cat <<'msgend'
+ ___________________
+< I'm dracut module >
+ -------------------
+    \
+     \
+	    .--.
+       |o_o |
+       |:_/ |
+      //   \ \
+     (|     | )
+    /'\_   _/`\
+    \___)=(___/
+msgend
+sleep 10
+echo " continuing...."
+#------------------------------------------------
+EOF
+```
+
+Оба скрипта делаем исполняемыми:
+```
+chmod +x module-setup.sh && chmod +x test.sh
+```
+Создаем новый initramfs: 
+```
+dracut -f -v
+```
+Убедимся что модуль добавлен:
+```
+lsinitrd -m /boot/initramfs-$(uname -r).img | grep test
+```
