@@ -58,9 +58,8 @@ then
 fi
   echo "Process is running ( PID: $$ )" > $LOCKFILE
   trap 'rm -f $LOCKFILE' EXIT
+
   sh ./script_test.sh access.log 8 5 all
-  rm -f $LOCKFILE
-  trap - EXIT
 ```
 
 ***Тестирование скрипта***
