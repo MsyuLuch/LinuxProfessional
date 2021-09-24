@@ -1,0 +1,24 @@
+---
+# tasks file for web-nginx
+  - name: Install nginx
+    apt:
+      name: nginx
+      state: present
+    notify: Restart nginx
+
+  - name: Enable nginx
+    systemd:
+      name: nginx
+      state: restarted
+      enabled: yes
+
+  - name: HTML
+    template:
+      src: page.html.j2
+      dest: /usr/share/nginx/html/index.html
+
+  - name: Nginx conf
+    template:
+      src: nginx.default.conf.j2
+      dest: /etc/nginx/sites-enabled/default
+    notify: Reload nginx

@@ -1,0 +1,6 @@
+---
+# vars file for web-nginx
+nginx_listen_port: 8080
+
+page_title: "My site"
+page_description: "..."
