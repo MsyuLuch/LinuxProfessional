@@ -19,8 +19,8 @@
 - `VagrantFile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
 - `ansible.cfg` - conf-файл для Ansible
 - `playbook-web-nginx.yml` -  playbook для установки NGINX
-- `roles` - файлы роли для установки NGINX
-- `inventories` - файлы описывающие хосты
+- `/roles/` - файлы роли для установки NGINX
+- `/inventories/` - файлы, описывающие основные параметры для хостов
 
 # **Описание процесса выполнения домашнего задания №10**
 
@@ -28,9 +28,8 @@
 ```
 ansible-galaxy init roles/web-nginx
 ```
-Опишем переменные для роли:
+Опишем переменные для роли в файле `/roles/web-nginx/vars/main.yml`:
 ```
-# vars file for web-nginx
 # Порт, на котором будет слушать NGINX
 nginx_listen_port: 8080
 
@@ -38,7 +37,7 @@ nginx_listen_port: 8080
 page_title: "My site"
 page_description: "..."
 ```
-В папке `templates` лежат 2 шаблона в формате j2 ():
+В папке `templates` лежат 2 шаблона в формате j2 (Jinja2):
 ```
 # nginx.conf
 server {
@@ -73,9 +72,8 @@ server {
 </body>
 </html>
 ```
-Опишем `tasks` для роли:
+Опишем `tasks` для роли, по шагам: установим NGINX, добавим его в автозагрузку, изменим conf-файлы и страничку сайта, перезагрузим NGINX:
 ```
----
 # Установливаем NGINX
   - name: Install nginx 
     apt:
