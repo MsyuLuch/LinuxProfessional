@@ -1,0 +1,9 @@
+all:
+  children:
+    web-server:
+  vars:
+    ansible_user: vagrant
+
+web-server:
+  hosts:
+    web-nginx:
