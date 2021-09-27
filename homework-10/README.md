@@ -148,5 +148,13 @@ callback_whitelist = profile_tasks
         ansible.become = "true"
      end
 ```
+Поднимаем виртуальную машину и проверяем результат:
+```
+vagrant up
 
+# проверим, слушает ли NGINX на порту 8080
+ss -tnlp
+# вернем страницу index.html
+curl http://localhost:8080
+```
 
