@@ -277,15 +277,15 @@ type=AVC msg=audit(1633435767.697:2038): avc:  denied  { create } for  pid=5230 
 ```
 Формируем модуль с разрешающими правилами для Selinux из данного лога:
 ```
-[root@ns01 ~]# audit2allow -M named-selinux --debug < /var/log/audit/audit.log
+[root@ns01 ~]# audit2allow -M named-allow --debug < /var/log/audit/audit.log
 ******************** IMPORTANT ***********************
 To make this policy package active, execute:
 
-semodule -i named-selinux.pp
+semodule -i named-allow.pp
 ```
 Загружаем модуль:
 ```
-[root@ns01 ~]# semodule -i named-selinux.pp
+[root@ns01 ~]# semodule -i named-allow.pp
 ``` 
 Снова пробуем с клиента подключиться, ошибка повторяется, смотрим лог:
 ```
