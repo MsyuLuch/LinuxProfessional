@@ -53,9 +53,9 @@ Max kernel policy version:      31
 [root@server ~]# getenforce
 Enforcing
 ```
-Перезагружаем NGINX, смотрим ошибки и рекомендации в audit.log:
+Запускаем NGINX, смотрим ошибки и рекомендации в audit.log:
 ```
-[root@server ~]# systemctl restart nginx
+[root@server ~]# systemctl start nginx
 Job for nginx.service failed because the control process exited with error code. See "systemctl status nginx.service" and "journalctl -xe" for details.
 
 [root@server ~]# audit2why < /var/log/audit/audit.log
