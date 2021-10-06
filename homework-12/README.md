@@ -331,6 +331,7 @@ root@ns01 ~]# systemctl status -l named
 Oct 05 13:54:18 ns01 named[25811]: client @0x7f7f9803c3e0 192.168.50.15#56239/key zonetransfer.key: view view1: signer "zonetransfer.key" approved
 Oct 05 13:54:18 ns01 named[25811]: client @0x7f7f9803c3e0 192.168.50.15#56239/key zonetransfer.key: view view1: updating zone 'ddns.lab/IN': adding an RR at 'www.ddns.lab' A 192.168.50.15
 ```
+![It`s work!](/images/NS01-Client.png)
 --------------------------------------------------------------------------
 Рекомендации по устранению проблемы:
 - проверить разрешения на доступ к основным файлам:
