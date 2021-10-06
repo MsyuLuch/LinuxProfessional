@@ -1,0 +1,12 @@
+---
+# handlers file for web-nginx
+ - name: Restart nginx
+   systemd:
+     name: nginx
+     state: restarted
+     enabled: yes
+
+ - name: Reload nginx
+   systemd:
+     name: nginx
+     state: reloaded
