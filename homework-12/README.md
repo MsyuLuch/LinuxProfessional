@@ -109,7 +109,9 @@ LISTEN     0      128       [::]:111                   [::]:*                   
 ```
 2. Создание модуля с правилами Selinux
 
-Формируем модуль и загружаем его:
+При попытке запустить NGINX, Selinux пишет ошибки и рекомендации по их устранению в файл `audit.log`. 
+Для добавления разрешающей политики можно использовать утилиту `audit2allow`. 
+Формируем модуль, на основе рекомендаций из лога и загружаем его:
 ```
 [root@server ~]# audit2allow -M httpd_add --debug < /var/log/audit/audit.log
 
@@ -154,7 +156,7 @@ LISTEN     0      100                                         [::1]:25          
 
 3. Добавляем порт в разрешенные для данного сервиса
 
-Просматриваем список доступных портов
+Просматриваем список доступных портов для запуска сервиса
 ```
 [root@server ~]# semanage port -l | grep http 
 http_cache_port_t              tcp      8080, 8118, 8123, 10001-10010
@@ -263,7 +265,7 @@ dns.lab.		3600	IN	NS	ns01.dns.lab.
 > send
 update failed: SERVFAIL
 ```
-Подключаемся к dns серверу, смотрим ошибки в файле `audit.log`:
+Подключаемся к dns серверу, с помощью утилиты `audit2why`, смотрим ошибки в файле `audit.log`:
 ```
 [root@ns01 ~]# audit2why < /var/log/audit/audit.log
 type=AVC msg=audit(1633435767.697:2038): avc:  denied  { create } for  pid=5230 comm="isc-worker0000" name="named.ddns.lab.view1.jnl" scontext=system_u:system_r:named_t:s0 tcontext=system_u:object_r:etc_t:s0 tclass=file permissive=0
@@ -273,7 +275,7 @@ type=AVC msg=audit(1633435767.697:2038): avc:  denied  { create } for  pid=5230 
 
 		You can use audit2allow to generate a loadable module to allow this access.
 ```
-Формируем модуль с правилами для Selinux из данного лога:
+Формируем модуль с разрешающими правилами для Selinux из данного лога:
 ```
 [root@ns01 ~]# audit2allow -M named-selinux --debug < /var/log/audit/audit.log
 ******************** IMPORTANT ***********************
