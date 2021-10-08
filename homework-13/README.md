@@ -120,7 +120,7 @@ def279444507   mashkinasu/my-nginx:v1   "nginx -g 'daemon of…"   10 minutes ag
 5b5cec287189   bitnami/php-fpm:7.4.24   "php-fpm -F --pid /o…"   10 minutes ago   Up 10 minutes               9000/tcp   php
 ```
 # ***Определите разницу между контейнером и образом***
-!()
+!(https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-13/images/image.png)
 
 # ****Определение образа (Image)****
 
