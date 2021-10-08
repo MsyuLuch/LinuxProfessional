@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  web:
+    image: mashkinasu/my-nginx:v1
+    container_name: web
+    depends_on:
+      - php
+    volumes:
+      - ./default.conf:/etc/nginx/sites-available/default
+      - ./default.conf:/etc/nginx/sites-enabled/default
+      - ./index.php:/var/www/index.php
+    ports:
+      - "8080:80"
+    networks:
+      front_net:
+        aliases:
+          - web
+
+  php:
+    image: bitnami/php-fpm:7.4.24
+    container_name: php
+    volumes:
+      - ./index.php:/var/www/index.php
+    networks:
+      front_net:
+        aliases:
+          - php
+
+networks:
+  front_net:
+    ipam:
+      driver: default
