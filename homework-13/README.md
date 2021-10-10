@@ -1,6 +1,6 @@
 # **Домашнее задание №13**
 
-🔖Домашнее задание/проектная работа выполнено для курса [Administrator Linux.Professional](https://otus.ru/lessons/linux-professional/)
+🔖Домашнее задание выполнено для курса [Administrator Linux.Professional](https://otus.ru/lessons/linux-professional/)
 
 ## **Docker, docker-compose, dockerfile**
  
