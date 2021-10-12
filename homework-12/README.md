@@ -35,7 +35,7 @@
 
 # ***Создание сервиса мониторинга log-файла***
 
-Опишем скрипт для мониторинга log-файла на конкретную фразу:
+Опишем скрипт для мониторинга log-файла на поиск конкретной фразы:
 ```
 #!/bin/bash
 
@@ -79,13 +79,14 @@ ExecStart=/bin/bash '/opt/script.sh'
 [Install]
 WantedBy=multi-user.target
 ```
-
+Опишем таймер для данного сервиса. 
+Сервиса активируется через 1 сек после запуска будет вызываться каждые 30 сек 
 ```
 [Unit]
 Description=Execute checklog every 30 sec
 
 [Timer]
-# Run after booting one minute
+# Run after booting one second
 OnActiveSec=1s
 OnBootSec=1m
 # Run every one hour or one munite
@@ -96,7 +97,7 @@ Unit=checklog.service
 [Install]
 WantedBy=multi-user.target
 ```
-
+Проверим работу сервиса и содержимое `/var/log/messages`:
 ```
 [vagrant@server ~]$ sudo systemctl start checklog.timer
 [vagrant@server ~]$ sudo systemctl status checklog.timer
@@ -166,7 +167,8 @@ WantedBy=multi-user.target
 
 # ***Дополнить unit-файл httpd (он же apache) возможностью запустить несколько инстансов сервера***
 
-Создадим unit модуля для сервиса httpd `/etc/systemd/system/httpd@.service`:
+Создадим unit модуля для сервиса httpd `/etc/systemd/system/httpd@.service`.
+%I - имя инстанса, которое будет подставлено в каждой новой версии сервиса
 ```
 [Unit]
 Description=The Apache HTTP Server
