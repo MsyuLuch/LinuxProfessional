@@ -197,12 +197,12 @@ WantedBy=multi-user.target
 Скопируем конфигурационные файлы Apache, изменив для разных инстансов порт и PID процесса:
 ```
 /etc/httpd/conf/apache1.conf :
-
 Listen 8081
 PidFile /var/run/instance-apache1.pid
---------------------------------------------
-/etc/httpd/conf/apache2.conf :
 
+--------------------------------------------
+
+/etc/httpd/conf/apache2.conf :
 Listen 8082
 PidFile /var/run/instance-apache2.pid
 ``` 
