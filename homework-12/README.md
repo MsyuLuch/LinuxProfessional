@@ -213,7 +213,7 @@ systemctl start httpd@apache2.service
 ```
 ```
 [vagrant@server ~]$ ss -tnlp
-State               Recv-Q              Send-Q                            Local Address:Port                             Peer Address:Port              Process              
+State               Recv-Q              Send-Q                            Local Address:Port                             Peer Address:Port            
 LISTEN              0                   128                                     0.0.0.0:111                                   0.0.0.0:*                                      
 LISTEN              0                   128                                     0.0.0.0:22                                    0.0.0.0:*                                      
 LISTEN              0                   128                                        [::]:111                                      [::]:*                                      
