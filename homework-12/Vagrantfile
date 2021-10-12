@@ -22,6 +22,9 @@ Vagrant.configure("2") do |config|
   server.vm.provision "shell", inline: <<-SHELL
       mkdir -p ~root/.ssh
       cp ~vagrant/.ssh/auth* ~root/.ssh
+
+      setenforce 0
+
       cp /vagrant/script.sh /opt/
       cp /vagrant/checklog /etc/sysconfig/
       cp /vagrant/checklog.service /etc/systemd/system/
@@ -33,9 +36,8 @@ Vagrant.configure("2") do |config|
       yum install epel-release -y && yum install spawn-fcgi php php-cli mod_fcgid httpd -y
 	  cp /vagrant/spawn-fcgi /etc/systemd/system/
 	  cp /vagrant/spawn-fcgi.service /etc/systemd/system/
-	  systemctl start spawn-fcgi.service
+	  systemctl start spawn-fcgi
 
-      setenforce 0
       cp /vagrant/httpd@.service /etc/systemd/system/
       cp /vagrant/apache1.conf /etc/httpd/conf/apache1.conf
       cp /vagrant/apache2.conf /etc/httpd/conf/apache2.conf
