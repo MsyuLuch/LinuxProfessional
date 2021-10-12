@@ -1,0 +1,2 @@
+STRING="ERROR"
+FILENAME=/var/log/backup_database.log

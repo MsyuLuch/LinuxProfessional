@@ -1,0 +1,10 @@
+[Unit]
+Description=Checklog
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/sysconfig/checklog
+ExecStart=/bin/bash '/opt/script.sh'
+
+[Install]
+WantedBy=multi-user.target

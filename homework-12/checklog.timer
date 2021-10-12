@@ -1,0 +1,14 @@
+[Unit]
+Description=Execute checklog every 30 sec
+
+[Timer]
+# Run after booting one minute
+OnActiveSec=1s
+OnBootSec=1m
+# Run every one hour or one munite
+OnUnitActiveSec=30s
+
+Unit=checklog.service
+
+[Install]
+WantedBy=multi-user.target

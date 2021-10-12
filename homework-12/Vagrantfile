@@ -1,0 +1,49 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'open3'
+require 'fileutils'
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "server" do |server|
+  server.vm.boot_timeout = 600
+  server.vm.box = 'centos/8.4'
+  server.vm.box_url = 'http://cloud.centos.org/centos/8/vagrant/x86_64/images/CentOS-8-Vagrant-8.4.2105-20210603.0.x86_64.vagrant-virtualbox.box'
+
+  server.vm.host_name = 'server'
+  server.vm.network :private_network, ip: "10.0.0.41"
+
+  server.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+
+  server.vm.provision "shell", inline: <<-SHELL
+      mkdir -p ~root/.ssh
+      cp ~vagrant/.ssh/auth* ~root/.ssh
+      cp /vagrant/script.sh /opt/
+      cp /vagrant/checklog /etc/sysconfig/
+      cp /vagrant/checklog.service /etc/systemd/system/
+      cp /vagrant/checklog.timer /etc/systemd/system/
+      cp /vagrant/backup_database.log /var/log/backup_database.log
+      systemctl daemon-reload
+      systemctl start checklog.timer
+
+      yum install epel-release -y && yum install spawn-fcgi php php-cli mod_fcgid httpd -y
+	  cp /vagrant/spawn-fcgi /etc/sysconfig/
+	  cp /vagrant/spawn-fcgi.service /etc/sysconfig/
+	  systemctl start spawn-fcgi.service
+
+      setenforce 0
+      cp /vagrant/httpd@.service /etc/systemd/system/
+      cp /vagrant/apache1.conf /etc/httpd/conf/apache1.conf
+      cp /vagrant/apache2.conf /etc/httpd/conf/apache2.conf
+
+      systemctl start httpd@apache1.service
+      systemctl start httpd@apache2.service
+
+  SHELL
+  end
+
+end
