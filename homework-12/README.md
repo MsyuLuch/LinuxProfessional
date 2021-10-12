@@ -80,7 +80,10 @@ ExecStart=/bin/bash '/opt/script.sh'
 WantedBy=multi-user.target
 ```
 Опишем таймер для данного сервиса. 
-Сервиса активируется через 1 сек после запуска будет вызываться каждые 30 сек 
+
+OnActiveSec - определяет таймер относительно момента времени его активации
+
+OnBootSec - определяет таймер при загрузке системы
 ```
 [Unit]
 Description=Execute checklog every 30 sec
