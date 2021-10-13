@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
       systemctl start checklog.timer
 
       yum install epel-release -y && yum install spawn-fcgi php php-cli mod_fcgid httpd -y
-	  cp /vagrant/spawn-fcgi /etc/systemd/system/
+	  cp /vagrant/spawn-fcgi /etc/sysconfig/
 	  cp /vagrant/spawn-fcgi.service /etc/systemd/system/
 	  systemctl start spawn-fcgi.service
 
