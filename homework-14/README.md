@@ -284,5 +284,7 @@ sudo systemctl status grafana-server
 ```
 http://10.0.0.100:3000/
 ```
-
+!Prometheus(https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-14/images/image-3.jpg)
+!Node-Exporter(https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-14/images/image-1.jpg)
+!Grafana(https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-14/images/image-2.jpg)
 
