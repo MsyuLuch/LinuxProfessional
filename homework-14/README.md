@@ -272,7 +272,6 @@ sudo dpkg -i grafana-enterprise_8.2.1_amd64.deb
 ```
 Запустим и проверим работу
 ```
-sudo systemctl daemon-reload
 sudo systemctl start grafana-server
 sudo systemctl status grafana-server
 ```
