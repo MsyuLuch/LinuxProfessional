@@ -83,7 +83,7 @@ http://10.0.0.100:3000/         # Grafana
     - "{{ prometheus_config_dir }}/file_sd"    
 ```
 
-Чтобы установить `Prometheus` скачаем архив `Prometheus` последней версии
+Чтобы установить `Prometheus` скачаем архив последней версии
 ```
     - name: download prometheus binary to local folder
       become: false
@@ -98,7 +98,7 @@ http://10.0.0.100:3000/         # Grafana
       delegate_to: localhost
       check_mode: false
 ```
-Распакуем скачанный архив и скопируем файлы в созданную ранее конфигурационную директорию
+Распакуем скачанный архив и скопируем файлы в созданную ранее конфигурационную директорию.
 Не забываем назначить права на файлы.
 ```
     - name: unpack prometheus binaries
@@ -137,23 +137,8 @@ http://10.0.0.100:3000/         # Grafana
         - restart prometheus
   when:
     - prometheus_binary_local_dir | length == 0
-
-- name: propagate locally distributed prometheus binaries
-  copy:
-    src: "{{ prometheus_binary_local_dir }}/{{ item }}"
-    dest: "{{ _prometheus_binary_install_dir }}/{{ item }}"
-    mode: 0755
-    owner: root
-    group: root
-  with_items:
-    - prometheus
-    - promtool
-  when:
-    - prometheus_binary_local_dir | length > 0
-  notify:
-    - restart prometheus
 ```
-Создадим модуль сервиса для `Prometheus` и конфигурационный файл.
+Создадим модуль сервиса для `Prometheus` и заменим конфигурационный файл.
 Перезагрузим `Prometheus`.
 ```
 - name: create systemd service unit
@@ -287,6 +272,7 @@ sudo dpkg -i grafana-enterprise_8.2.1_amd64.deb
 ```
 Запустим и проверим работу
 ```
+sudo systemctl daemon-reload
 sudo systemctl start grafana-server
 sudo systemctl status grafana-server
 ```
