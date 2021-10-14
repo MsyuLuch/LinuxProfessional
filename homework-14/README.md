@@ -15,14 +15,26 @@
 
 Здесь:
 - `readme.md` - описание процесса выполнения домашнего задания
-- `dockerfile` - файл для сборки кастомного NGINX
-- `default.conf` - конфигурационный файл NGINX
-- `index.html` - кастомная страничка для NGINX (используется при сборке из dockerfile)
-- `docker-compose.yml` -  файл для сборки NGINX и php-fpm
-- `index.php` - кастомная страничка для NGINX (используется при сборке из docker-compose)
+- `Vagrantfile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
+--------------------------------------------------
+
+- `/roles/node-exporter/` - роль для установки Prometheus
+- `/roles/prometheus/` - роль для установки Node-Exporter
 
 # **Описание процесса выполнения домашнего задания №14**
 
+Vagrantfile поднимает 2 виртуальных машины: server, client.
+На `server` устнавливается Prometheus (роль Ansible) и Grafana (скрипт при старте VM).
+На `client` устанавливается Node-exporter (роль Ansible).
+
+Для проверки сервисов в браузере
+```
+http://10.0.0.100:9090/targets  # Prometheus
+
+http://10.0.0.101:9100/metrics  # Node-Exporter 
+
+http://10.0.0.100:3000/         # Grafana
+```
 
 
 # ***Установка Prometheus***
