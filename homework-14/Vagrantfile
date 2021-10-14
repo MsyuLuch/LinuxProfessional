@@ -1,0 +1,57 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+   config.vm.define "server" do |server|
+      server.vm.box = 'ubuntu/bionic64'
+      server.vm.boot_timeout = 600
+
+      server.vm.host_name = 'server'
+      server.vm.network :private_network, ip: "10.0.0.100"
+
+      server.vm.provider "virtualbox" do |vb|
+        vb.memory = "1024"
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      end
+
+       server.vm.provision "shell", inline: <<-SHELL
+          mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+          sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+          systemctl restart sshd
+
+          sudo apt-get install -y adduser libfontconfig1
+          wget https://dl.grafana.com/enterprise/release/grafana-enterprise_8.2.1_amd64.deb
+          sudo dpkg -i grafana-enterprise_8.2.1_amd64.deb
+       SHELL
+
+       end
+
+       config.vm.define "client" do |client|
+         client.vm.box = 'ubuntu/bionic64'
+         client.vm.boot_timeout = 600
+
+         client.vm.host_name = 'client'
+         client.vm.network :private_network, ip: "10.0.0.101"
+
+         client.vm.provider "virtualbox" do |vb|
+           vb.memory = "1024"
+           vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+         end
+
+         client.vm.provision "shell", inline: <<-SHELL
+             mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+             sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+             systemctl restart sshd
+          SHELL
+
+          client.vm.provision "ansible" do |ansible|
+             ansible.playbook = "playbook-prometheus.yml"
+             ansible.become = "true"
+          end
+
+          end
+
+
+
+end
