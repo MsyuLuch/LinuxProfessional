@@ -42,11 +42,12 @@ useradd -G cant_user
 echo "123" | sudo passwd --stdin can_user &&\
 echo "123" | sudo passwd --stdin cant_user
 ```
-
+Настроим модуль PAM, добавив в начало строку выполняющую запуск скрипта `pam_script.sh` при попутке подключиться по ssh
 ```
 sed -i "2i auth       required     pam_exec.so /usr/local/bin/pam_script.sh"  /etc/pam.d/sshd
 ```
-Создаем скрипт, который будет при попытке залогиниться проверять принадлежит ли пользователь группе `admin`.
+Создаем скрипт, который будет выполняться при подключении по ssh. 
+Скрипт будет проверять принадлежит ли пользователь группе `admin`.
 Если пользователь принадлежит группе, он сможет войти в любой день, иначе только в рабочие дни. Делаем скрипт исполняемым.
 ```
 cat <<'EOF' > /usr/local/bin/pam_script.sh
@@ -69,7 +70,7 @@ sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_
 systemctl restart sshd
 ```
 
-# ***Дать конкретному пользователю права на перезапуск докера***
+# ***Дать конкретному пользователю права на перезапуск docker***
 
 Устанавливаем docker, добавляем в автозагрузку и запускаем
 ```
@@ -78,13 +79,15 @@ yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce
 yum install docker-ce docker-ce-cli containerd.io -y
 systemctl enable --now docker
 ```
-Создаем пользователя `docker_user` и добавляем его в группу `docker`
+Создаем пользователя `docker_user` и добавляем его в группу `docker`. 
+Группа добавляется при установке docker и позволяет пользователям входящим в нее работать с docker.
 ```
 useradd docker_user
 echo "123" | sudo passwd --stdin docker_user
 usermod -aG docker docker_user
 ```
-Добавляем в файл `/etc/sudoers` права для пользователя `docker_user` на перезагрузку сервиса 
+Добавляем в файл `/etc/sudoers` права для пользователя `docker_user` на перезагрузку сервиса.
+Файл рекомендуется править с помощью команды `sudo visudo`. 
 ```
 echo %docker_user ALL=NOPASSWD: /bin/systemctl restart docker.service>>/etc/sudoers
 ```
