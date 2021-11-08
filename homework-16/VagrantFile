@@ -1,0 +1,71 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+    config.vm.box = 'centos/8.4'
+    config.vm.box_url = 'http://cloud.centos.org/centos/8/vagrant/x86_64/images/CentOS-8-Vagrant-8.4.2105-20210603.0.x86_64.vagrant-virtualbox.box'
+
+    config.vm.define "elastic" do |elk|	
+       elk.vm.host_name = 'server'
+       elk.vm.network :private_network, ip: "10.0.0.100"
+
+       elk.vm.provider "virtualbox" do |vb|
+        vb.memory = "2048"
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+       end
+
+       elk.vm.provision "shell", inline: <<-SHELL
+         mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+         sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+         systemctl restart sshd
+
+         rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+         cp -f /vagrant/repos/* /etc/yum.repos.d/
+
+         yum install --enablerepo=elasticsearch elasticsearch -y
+         systemctl daemon-reload && systemctl enable elasticsearch.service && systemctl start elasticsearch.service && systemctl status elasticsearch.service
+
+         yum install kibana -y
+         cp -f /vagrant/kibana/* /etc/kibana/
+         systemctl daemon-reload && systemctl enable kibana.service && systemctl start kibana.service && systemctl status kibana.service
+
+         yum install logstash -y
+         cp -rf /vagrant/logstash/* /etc/logstash/
+         systemctl enable logstash.service && systemctl start logstash.service && systemctl status logstash.service
+
+       SHELL
+
+     end
+
+     config.vm.define "web" do |web|
+      web.vm.hostname = "web"
+      web.vm.network:private_network, ip:"10.0.0.110"
+
+      web.vm.provider "virtualbox" do |vb|
+          vb.customize ["modifyvm", :id, "--memory", "1024"]
+      end
+       
+      web.vm.provision "shell", inline: <<-SHELL
+         mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+         sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+         systemctl restart sshd
+
+	     yum install nginx -y
+         cp -f /vagrant/nginx/* /etc/nginx/
+	     systemctl enable nginx && systemctl start nginx && systemctl status nginx
+
+         rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+         cp -f /vagrant/repos/* /etc/yum.repos.d/
+	     yum install filebeat -y
+	     cp -f /vagrant/filebeat/* /etc/filebeat
+	     systemctl start filebeat && systemctl enable filebeat && systemctl status filebeat
+
+         auditctl -w /etc/nginx/nginx.conf -p wa -k web_config_changed
+
+      SHELL
+
+     end
+
+end
+
