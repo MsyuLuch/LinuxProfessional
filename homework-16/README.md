@@ -192,3 +192,6 @@ auditctl -l
 ```
 auditctl -w /etc/nginx/nginx.conf -p wa -k web_config_changed
 ```
+![syslog](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-16/images/syslog.png)
+![audit](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-16/images/audit.png)
+![nginx](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-16/images/nginx-log.png)
