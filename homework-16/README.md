@@ -20,8 +20,6 @@
 - `VagrantFile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
 - конфигурационные файлы для настройки ELK Stack
 
-# **Описание процесса выполнения домашнего задания №16**
-
 Централизованный сбор логов будем реализовывать с помощью ELK Stack:
 
 - Elasticsearch используется для хранения, анализа, поиска по логам.
@@ -33,16 +31,20 @@
  - web - с установленным NGINX и Filebeat
  - elastic - ELK Stack (Elasticsearch, Logstash, Kibana)
  
- Проверить работу ELK стека можно в веб-интерфейсе Kibana по адресу `http://10.0.0.100:5601`. 
- Необходимо добавить индексы:
+ Проверить работу ELK Stack можно в веб-интерфейсе Kibana по адресу `http://10.0.0.100:5601`. 
+ Необходимо добавить индексы (Для этого открываем web интерфейс и переходим в раздел Discover. 
+ Так как там еще нет индекса, нас перенаправит в раздел Management, где мы сможем его добавить - Createindex pattern):
  - nginx*
  - audit*
  - syslog*
- Данные собираются с `web` с помощью сервиса filebeat, который в свою очередь отправляет их в `logstash`, 
- где они обрабатываются и пересылаются в базу Elasticsearch. 
+ 
+ Данные собираются с `web` с помощью агента Filebeat, который в свою очередь отправляет их в `Logstash`, 
+ где они обрабатываются и пересылаются в базу `Elasticsearch`. 
  
  Дополнительно настроено слежение за изменением конфигурационных файлов NGINX. Проверить работу NGINX можно по адресу `http://10.0.0.110`
  
+# **Описание процесса выполнения домашнего задания №16**
+
  При старте виртуальной машины `elastic`, выполняется следующий набор команд:
  ```
          # Копируем публичный ключ репозитория:
@@ -54,7 +56,7 @@
          yum install --enablerepo=elasticsearch elasticsearch -y
          systemctl daemon-reload && systemctl enable elasticsearch.service && systemctl start elasticsearch.service && systemctl status elasticsearch.service
 
-         # скачиваем и устанавливаем Kibana, копируем конфигурационные файлы, изменив только значение host на ip адрес виртуальной машины 
+         # скачиваем и устанавливаем Kibana, копируем конфигурационные файлы
          yum install kibana -y
          cp -f /vagrant/kibana/* /etc/kibana/
          systemctl daemon-reload && systemctl enable kibana.service && systemctl start kibana.service && systemctl status kibana.service
@@ -73,7 +75,7 @@ Kibana - панель для визуализации данных, получе
 ```
 server.host: "10.0.0.100:5601"
 ``` 
-Logstash принимает данные на порту 5044 `input.conf`:
+Logstash принимает данные на порту 5044:
 ```
 input {
   beats {
@@ -81,7 +83,7 @@ input {
   }
 }
 ```
-Далее логи будут парситься (добавляются префиксы `nginx-`, `audit-`, `syslog-`) и перенаправляться в Elastic - `localhost:9200`.
+Далее Logstash парсит логи (добавляет префиксы `nginx-`, `audit-`, `syslog-`) и перенаправляет в Elastic - `localhost:9200`.
 ```
 output {
     if [type] == "nginx_access" {
@@ -172,7 +174,13 @@ output.logstash:
   hosts: ["10.0.0.100:5044"]
 ```
 Агент будет собирать логи NGINX, auditd, messages, пути к логам прописаны в конфиге, 
-а также добавлено дополнительное поле `type` для парсинга в Logstash. 
+а также добавлено дополнительное поле `type` для парсинга в Logstash. Данные будут направлены 
+в Logstash `hosts: ["10.0.0.100:5044"]`.
+
+Проверить соединение с Logstash можно командой:
+```
+filebeat test output
+```
 
 Дополнительно настроим auditd.
 Auditd регистрирует любые изменения, внесенные в файлы конфигурации аудита, 
@@ -192,6 +200,7 @@ auditctl -l
 ```
 auditctl -w /etc/nginx/nginx.conf -p wa -k web_config_changed
 ```
+
 ![syslog](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-16/images/syslog.jpg)
 ![audit](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-16/images/audit.jpg)
 ![nginx](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-16/images/nginx-log.jpg)
