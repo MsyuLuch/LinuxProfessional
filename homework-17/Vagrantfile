@@ -1,0 +1,95 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+home = ENV['HOME']
+ENV["LC_ALL"] = "en_US.UTF-8"
+
+backupdisk = home + '/VirtualBox VMs/backupdisk.vdi';
+
+Vagrant.configure("2") do |config|
+
+    config.vm.box = 'centos/8.4'
+    config.vm.box_url = 'http://cloud.centos.org/centos/8/vagrant/x86_64/images/CentOS-8-Vagrant-8.4.2105-20210603.0.x86_64.vagrant-virtualbox.box'
+
+    config.vm.provider "virtualbox" do |vb|
+        vb.memory = "1024"
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    config.vm.provision "shell", inline: <<-SHELL
+         mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+         sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+         sed -i '/StrictHostKeyChecking/c StrictHostKeyChecking no' /etc/ssh/ssh_config
+         systemctl restart sshd
+
+         yum install epel-release -y
+         dnf install 'dnf-command(config-manager)'
+         dnf config-manager --set-enabled powertools
+         yum install borgbackup -y
+         useradd -m borg
+         echo "123" | sudo passwd --stdin borg
+	 yum install mc -y
+
+         mkdir -p /home/borg/.ssh
+	 chown -R borg:borg /home/borg
+       SHELL
+
+    config.vm.define "server" do |server|
+       server.vm.host_name = 'server'
+       server.vm.network :private_network, ip: "10.0.0.100"
+
+      server.vm.provider "virtualbox" do |vb1|
+      needsController = false
+         unless File.exists?(backupdisk)
+           vb1.customize ['createhd', '--filename', backupdisk, '--variant', 'Fixed', '--size', 2048]
+           needsController =  true
+         end
+         if needsController == true
+           vb1.customize ["storagectl", :id, "--name", "SATA", "--add", "sata" ]
+           vb1.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', backupdisk]
+         end
+      end
+
+
+       server.vm.provision "shell", inline: <<-SHELL
+         yum -y install parted
+         parted /dev/sdb mklabel GPT
+         parted -a opt /dev/sdb mkpart primary ext4  0% 100%
+         mkfs.ext4 /dev/sdb1
+         mkdir /var/backup
+         mount /dev/sdb1 /var/backup
+         cat /etc/mtab | grep /dev/sdb >> /etc/fstab
+
+         echo "10.0.0.110 client" >> /etc/hosts
+         chown -R borg:borg /var/backup
+       SHELL
+    end
+
+     config.vm.define "client" do |client|
+      client.vm.hostname = "client"
+      client.vm.network:private_network, ip:"10.0.0.110"
+
+       client.vm.provision "shell", inline: <<-SHELL
+
+        echo "10.0.0.100 server" >> /etc/hosts
+        cp -f /vagrant/borg-backup.sh /opt/
+
+        touch /var/log/borg-backup.log && chown borg:borg /var/log/borg-backup.log
+cat <<'EOF' > /etc/logrotate.d/borg-backup
+/var/log/borg-backup.log {
+missingok
+notifempty
+compress
+size 100k
+daily
+create 0600 borg borg
+}
+EOF
+
+        echo "*/5  *  *  *  *  borg  /opt/borg-backup.sh >> /var/log/borg-backup.log" >> /etc/crontab
+        systemctl restart crond.service
+       SHELL
+
+     end
+
+end
+
