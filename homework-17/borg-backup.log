@@ -1,0 +1,853 @@
+Creating archive at "ssh://borg@server/var/backup/client::client-daily-2021-11-14T02:55:01"
+/etc/shadow: open: [Errno 13] Permission denied: '/etc/shadow'
+E /etc/shadow
+/etc/crypttab: open: [Errno 13] Permission denied: '/etc/crypttab'
+E /etc/crypttab
+A /etc/subuid
+/etc/gshadow: open: [Errno 13] Permission denied: '/etc/gshadow'
+E /etc/gshadow
+A /etc/group
+A /etc/resolv.conf
+A /etc/hostname
+A /etc/fstab
+A /etc/logrotate.d/dnf
+A /etc/logrotate.d/samba
+A /etc/logrotate.d/btmp
+A /etc/logrotate.d/wtmp
+A /etc/logrotate.d/sssd
+A /etc/logrotate.d/kvm_stat
+A /etc/logrotate.d/firewalld
+A /etc/logrotate.d/chrony
+A /etc/logrotate.d/syslog
+A /etc/logrotate.d/borg-backup
+A /etc/fuse.conf
+A /etc/centos-release
+A /etc/centos-release-upstream
+A /etc/issue
+A /etc/issue.net
+A /etc/system-release-cpe
+A /etc/aliases
+A /etc/bashrc
+A /etc/csh.cshrc
+A /etc/csh.login
+A /etc/environment
+A /etc/ethertypes
+A /etc/exports
+A /etc/filesystems
+/etc/gshadow-: open: [Errno 13] Permission denied: '/etc/gshadow-'
+E /etc/gshadow-
+A /etc/host.conf
+A /etc/hosts
+A /etc/inputrc
+A /etc/motd
+A /etc/networks
+/etc/shadow-: open: [Errno 13] Permission denied: '/etc/shadow-'
+E /etc/shadow-
+A /etc/printcap
+A /etc/profile
+A /etc/protocols
+A /etc/services
+A /etc/shells
+A /etc/subgid-
+A /etc/skel/.bash_logout
+A /etc/skel/.bash_profile
+A /etc/skel/.bashrc
+A /etc/ld.so.conf
+A /etc/ld.so.conf.d/kernel-4.18.0-305.3.1.el8.x86_64.conf
+A /etc/ld.so.conf.d/bind-export-x86_64.conf
+A /etc/nsswitch.conf.bak
+A /etc/rpc
+/etc/libaudit.conf: open: [Errno 13] Permission denied: '/etc/libaudit.conf'
+E /etc/libaudit.conf
+A /etc/request-key.conf
+A /etc/request-key.d/id_resolver.conf
+A /etc/request-key.d/cifs.idmap.conf
+A /etc/request-key.d/cifs.spnego.conf
+A /etc/xattr.conf
+A /etc/virc
+A /etc/GREP_COLORS
+A /etc/magic
+A /etc/groff/site-tmac/man.local
+A /etc/groff/site-tmac/mdoc.local
+A /etc/DIR_COLORS
+A /etc/DIR_COLORS.256color
+A /etc/DIR_COLORS.lightbgcolor
+A /etc/udev/udev.conf
+A /etc/udev/hwdb.bin
+A /etc/udev/rules.d/60-vboxadd.rules
+A /etc/openldap/ldap.conf
+A /etc/gss/mech.d/gssproxy.conf
+A /etc/krb5.conf
+A /etc/bindresvport.blacklist
+A /etc/netconfig
+A /etc/nsswitch.conf
+A /etc/default/useradd
+A /etc/default/grub
+A /etc/login.defs
+/etc/.pwd.lock: open: [Errno 13] Permission denied: '/etc/.pwd.lock'
+E /etc/.pwd.lock
+A /etc/adjtime
+/etc/tcsd.conf: open: [Errno 13] Permission denied: '/etc/tcsd.conf'
+E /etc/tcsd.conf
+A /etc/group-
+A /etc/passwd-
+A /etc/inittab
+A /etc/security/pwquality.conf
+A /etc/security/access.conf
+A /etc/security/chroot.conf
+A /etc/security/console.handlers
+A /etc/security/console.perms
+A /etc/security/faillock.conf
+A /etc/security/group.conf
+A /etc/security/limits.conf
+A /etc/security/namespace.conf
+A /etc/security/namespace.init
+/etc/security/opasswd: open: [Errno 13] Permission denied: '/etc/security/opasswd'
+E /etc/security/opasswd
+A /etc/security/pam_env.conf
+A /etc/security/sepermit.conf
+A /etc/security/time.conf
+A /etc/dracut.conf
+A /etc/dracut.conf.d/vmware-fusion-drivers.conf
+A /etc/dracut.conf.d/hyperv-drivers.conf
+A /etc/dracut.conf.d/nofloppy.conf
+A /etc/sysctl.conf
+A /etc/machine-id
+A /etc/.updated
+A /etc/sestatus.conf
+A /etc/locale.conf
+A /etc/vconsole.conf
+A /etc/subuid-
+A /etc/subgid
+A /etc/crontab
+A /etc/cron.deny
+A /etc/anacrontab
+A /etc/unbound/icannbundle.pem
+A /etc/unbound/root.key
+A /etc/logrotate.conf
+A /etc/idmapd.conf
+A /etc/nfs.conf
+A /etc/nfsmount.conf
+A /etc/libuser.conf
+A /etc/chrony.conf
+A /etc/mke2fs.conf
+A /etc/kdump.conf
+A /etc/makedumpfile.conf.sample
+/etc/chrony.keys: open: [Errno 13] Permission denied: '/etc/chrony.keys'
+E /etc/chrony.keys
+A /etc/rsyslog.conf
+/etc/sudo-ldap.conf: open: [Errno 13] Permission denied: '/etc/sudo-ldap.conf'
+E /etc/sudo-ldap.conf
+/etc/sudo.conf: open: [Errno 13] Permission denied: '/etc/sudo.conf'
+E /etc/sudo.conf
+/etc/sudoers: open: [Errno 13] Permission denied: '/etc/sudoers'
+E /etc/sudoers
+A /etc/man_db.conf
+A /etc/ld.so.cache
+A /etc/passwd
+A /etc/mc/edit.indent.rc
+A /etc/mc/filehighlight.ini
+A /etc/mc/mc.default.keymap
+A /etc/mc/mc.emacs.keymap
+A /etc/mc/mc.ext
+A /etc/mc/mc.menu
+A /etc/mc/mcedit.menu
+A /etc/mc/sfs.ini
+A /etc/libssh/libssh_client.config
+A /etc/libssh/libssh_server.config
+A /etc/pki/tls/ct_log_list.cnf
+A /etc/pki/tls/openssl.cnf
+A /etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+A /etc/pki/rpm-gpg/RPM-GPG-KEY-centostesting
+A /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8
+A /etc/pki/ca-trust/source/README
+A /etc/pki/ca-trust/README
+A /etc/pki/ca-trust/ca-legacy.conf
+A /etc/pki/ca-trust/extracted/edk2/README
+A /etc/pki/ca-trust/extracted/edk2/cacerts.bin
+A /etc/pki/ca-trust/extracted/java/README
+A /etc/pki/ca-trust/extracted/java/cacerts
+A /etc/pki/ca-trust/extracted/openssl/README
+A /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
+A /etc/pki/ca-trust/extracted/README
+A /etc/pki/ca-trust/extracted/pem/README
+A /etc/pki/ca-trust/extracted/pem/email-ca-bundle.pem
+A /etc/pki/ca-trust/extracted/pem/objsign-ca-bundle.pem
+A /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+/etc/pki/rsyslog: scandir: [Errno 13] Permission denied: '/etc/pki/rsyslog'
+E /etc/pki/rsyslog
+A /etc/yum.repos.d/epel-playground.repo
+A /etc/yum.repos.d/epel-testing-modular.repo
+A /etc/yum.repos.d/epel-testing.repo
+A /etc/yum.repos.d/epel.repo
+A /etc/yum.repos.d/CentOS-Linux-AppStream.repo
+A /etc/yum.repos.d/CentOS-Linux-BaseOS.repo
+A /etc/yum.repos.d/CentOS-Linux-ContinuousRelease.repo
+A /etc/yum.repos.d/CentOS-Linux-Debuginfo.repo
+A /etc/yum.repos.d/CentOS-Linux-Devel.repo
+A /etc/yum.repos.d/CentOS-Linux-Extras.repo
+A /etc/yum.repos.d/CentOS-Linux-FastTrack.repo
+A /etc/yum.repos.d/CentOS-Linux-HighAvailability.repo
+A /etc/yum.repos.d/CentOS-Linux-Media.repo
+A /etc/yum.repos.d/CentOS-Linux-Plus.repo
+A /etc/yum.repos.d/CentOS-Linux-PowerTools.repo
+A /etc/yum.repos.d/CentOS-Linux-Sources.repo
+A /etc/yum.repos.d/epel-modular.repo
+A /etc/sysconfig/network
+A /etc/sysconfig/cloud-info
+A /etc/sysconfig/run-parts
+A /etc/sysconfig/crond
+A /etc/sysconfig/samba
+/etc/sysconfig/ip6tables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ip6tables-config'
+E /etc/sysconfig/ip6tables-config
+/etc/sysconfig/iptables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/iptables-config'
+E /etc/sysconfig/iptables-config
+/etc/sysconfig/ebtables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ebtables-config'
+E /etc/sysconfig/ebtables-config
+A /etc/sysconfig/rpcbind
+A /etc/sysconfig/cpupower
+/etc/sysconfig/nftables.conf: open: [Errno 13] Permission denied: '/etc/sysconfig/nftables.conf'
+E /etc/sysconfig/nftables.conf
+A /etc/sysconfig/firewalld
+A /etc/sysconfig/kdump
+A /etc/sysconfig/chronyd
+A /etc/sysconfig/rsyslog
+/etc/sysconfig/sshd: open: [Errno 13] Permission denied: '/etc/sysconfig/sshd'
+E /etc/sysconfig/sshd
+A /etc/sysconfig/qemu-ga
+A /etc/sysconfig/irqbalance
+A /etc/sysconfig/man-db
+A /etc/sysconfig/kernel
+A /etc/sysconfig/anaconda
+A /etc/sysconfig/sshd-permitrootlogin
+A /etc/sysconfig/network-scripts/ifcfg-eth1
+A /etc/sysconfig/network-scripts/ifcfg-eth0
+A /etc/sysconfig/network-scripts/ifcfg-ens3
+A /etc/rc.d/rc.local
+A /etc/rc.d/init.d/README
+A /etc/rc.d/init.d/functions
+A /etc/libnl/classid
+A /etc/libnl/pktloc
+/etc/grub.d: scandir: [Errno 13] Permission denied: '/etc/grub.d'
+E /etc/grub.d
+A /etc/prelink.conf.d/grub2.conf
+A /etc/libibverbs.d/bnxt_re.driver
+A /etc/libibverbs.d/cxgb4.driver
+A /etc/libibverbs.d/efa.driver
+A /etc/libibverbs.d/hfi1verbs.driver
+A /etc/libibverbs.d/hns.driver
+A /etc/libibverbs.d/i40iw.driver
+A /etc/libibverbs.d/mlx4.driver
+A /etc/libibverbs.d/mlx5.driver
+A /etc/libibverbs.d/qedr.driver
+A /etc/libibverbs.d/rxe.driver
+A /etc/libibverbs.d/siw.driver
+A /etc/libibverbs.d/vmw_pvrdma.driver
+A /etc/iproute2/bpf_pinning
+A /etc/iproute2/ematch_map
+A /etc/iproute2/group
+A /etc/iproute2/nl_protos
+A /etc/iproute2/rt_dsfield
+A /etc/iproute2/rt_protos
+A /etc/iproute2/rt_realms
+A /etc/iproute2/rt_scopes
+A /etc/iproute2/rt_tables
+/etc/sssd: scandir: [Errno 13] Permission denied: '/etc/sssd'
+E /etc/sssd
+A /etc/tuned/bootcmdline
+A /etc/tuned/post_loaded_profile
+A /etc/tuned/profile_mode
+A /etc/tuned/tuned-main.conf
+A /etc/tuned/active_profile
+A /etc/vmware-tools/vgauth/schemas/XMLSchema-hasFacetAndProperty.xsd
+A /etc/vmware-tools/vgauth/schemas/XMLSchema-instance.xsd
+A /etc/vmware-tools/vgauth/schemas/XMLSchema.dtd
+A /etc/vmware-tools/vgauth/schemas/XMLSchema.xsd
+A /etc/vmware-tools/vgauth/schemas/catalog.xml
+A /etc/vmware-tools/vgauth/schemas/datatypes.dtd
+A /etc/vmware-tools/vgauth/schemas/saml-schema-assertion-2.0.xsd
+A /etc/vmware-tools/vgauth/schemas/xenc-schema.xsd
+A /etc/vmware-tools/vgauth/schemas/xml.xsd
+A /etc/vmware-tools/vgauth/schemas/xmldsig-core-schema.xsd
+A /etc/vmware-tools/poweroff-vm-default
+A /etc/vmware-tools/poweron-vm-default
+A /etc/vmware-tools/resume-vm-default
+A /etc/vmware-tools/statechange.subr
+A /etc/vmware-tools/suspend-vm-default
+A /etc/vmware-tools/tools.conf.example
+A /etc/vmware-tools/vgauth.conf
+A /etc/vmware-tools/scripts/vmware/network
+A /etc/libreport/events.d/collect_dnf.conf
+A /etc/dbus-1/system.d/nm-dispatcher.conf
+A /etc/dbus-1/system.d/org.freedesktop.PolicyKit1.conf
+A /etc/dbus-1/system.d/nm-ifcfg-rh.conf
+A /etc/dbus-1/system.d/org.freedesktop.NetworkManager.conf
+A /etc/dbus-1/system.d/teamd.conf
+A /etc/dbus-1/system.d/com.redhat.tuned.conf
+A /etc/dbus-1/session.conf
+A /etc/dbus-1/system.conf
+A /etc/bash_completion.d/authselect-completion.sh
+A /etc/bash_completion.d/redefine_filedir
+A /etc/bash_completion.d/iprconfig
+A /etc/gcrypt/random.conf
+A /etc/rdma/mlx4.conf
+A /etc/rdma/modules/infiniband.conf
+A /etc/rdma/modules/iwarp.conf
+A /etc/rdma/modules/opa.conf
+A /etc/rdma/modules/rdma.conf
+A /etc/rdma/modules/roce.conf
+A /etc/krb5.conf.d/kcm_default_ccache
+A /etc/depmod.d/dist.conf
+A /etc/pam.d/vlock
+A /etc/pam.d/config-util
+A /etc/pam.d/fingerprint-auth
+A /etc/pam.d/other
+A /etc/pam.d/password-auth
+A /etc/pam.d/postlogin
+A /etc/pam.d/smartcard-auth
+A /etc/pam.d/system-auth
+A /etc/pam.d/login
+A /etc/pam.d/remote
+A /etc/pam.d/runuser
+A /etc/pam.d/runuser-l
+A /etc/pam.d/su
+A /etc/pam.d/su-l
+A /etc/pam.d/systemd-user
+A /etc/pam.d/crond
+A /etc/pam.d/polkit-1
+A /etc/pam.d/sssd-shadowutils
+A /etc/pam.d/vmtoolsd
+A /etc/pam.d/passwd
+A /etc/pam.d/sshd
+A /etc/pam.d/sudo
+A /etc/pam.d/sudo-i
+A /etc/systemd/coredump.conf
+A /etc/systemd/journald.conf
+A /etc/systemd/logind.conf
+A /etc/systemd/resolved.conf
+A /etc/systemd/system.conf
+A /etc/systemd/user.conf
+A /etc/cron.daily/logrotate
+A /etc/NetworkManager/dispatcher.d/20-chrony
+A /etc/NetworkManager/dispatcher.d/11-dhclient
+A /etc/NetworkManager/NetworkManager.conf
+/etc/gssproxy/99-nfs-client.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/99-nfs-client.conf'
+E /etc/gssproxy/99-nfs-client.conf
+/etc/gssproxy/gssproxy.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/gssproxy.conf'
+E /etc/gssproxy/gssproxy.conf
+/etc/gssproxy/24-nfs-server.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/24-nfs-server.conf'
+E /etc/gssproxy/24-nfs-server.conf
+A /etc/authselect/user-nsswitch.conf
+/etc/firewalld: scandir: [Errno 13] Permission denied: '/etc/firewalld'
+E /etc/firewalld
+A /etc/dnf/modules.d/virt.module
+A /etc/dnf/modules.d/python36.module
+A /etc/dnf/modules.d/perl.module
+A /etc/dnf/modules.d/perl-IO-Socket-SSL.module
+A /etc/dnf/modules.d/perl-libwww-perl.module
+A /etc/dnf/vars/contentdir
+A /etc/dnf/vars/infra
+A /etc/dnf/plugins/copr.conf
+A /etc/dnf/plugins/debuginfo-install.conf
+A /etc/dnf/dnf.conf
+A /etc/dnf/protected.d/dnf.conf
+A /etc/dnf/protected.d/setup.conf
+A /etc/dnf/protected.d/systemd.conf
+A /etc/dnf/protected.d/yum.conf
+A /etc/dnf/protected.d/sudo.conf
+A /etc/rpm/macros.dist
+A /etc/profile.d/csh.local
+A /etc/profile.d/lang.csh
+A /etc/profile.d/lang.sh
+A /etc/profile.d/sh.local
+A /etc/profile.d/which2.csh
+A /etc/profile.d/which2.sh
+A /etc/profile.d/colorgrep.csh
+A /etc/profile.d/colorgrep.sh
+A /etc/profile.d/colorxzgrep.csh
+A /etc/profile.d/colorxzgrep.sh
+A /etc/profile.d/colorls.csh
+A /etc/profile.d/colorls.sh
+A /etc/profile.d/less.csh
+A /etc/profile.d/less.sh
+A /etc/profile.d/gawk.csh
+A /etc/profile.d/gawk.sh
+A /etc/profile.d/colorzgrep.csh
+A /etc/profile.d/colorzgrep.sh
+A /etc/profile.d/bash_completion.sh
+A /etc/profile.d/mc.csh
+A /etc/profile.d/mc.sh
+A /etc/X11/xorg.conf.d/00-keyboard.conf
+A /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
+A /etc/kernel/install.d/20-grubby.install
+A /etc/kernel/install.d/90-loaderentry.install
+A /etc/kernel/postinst.d/vboxadd
+A /etc/kernel/prerm.d/vboxadd
+A /etc/selinux/targeted/.policy.sha512
+A /etc/selinux/targeted/booleans.subs_dist
+A /etc/selinux/targeted/setrans.conf
+A /etc/selinux/targeted/seusers
+A /etc/selinux/targeted/contexts/files/file_contexts
+A /etc/selinux/targeted/contexts/files/file_contexts.homedirs
+A /etc/selinux/targeted/contexts/files/file_contexts.local
+A /etc/selinux/targeted/contexts/files/file_contexts.subs
+A /etc/selinux/targeted/contexts/files/file_contexts.subs_dist
+A /etc/selinux/targeted/contexts/files/media
+A /etc/selinux/targeted/contexts/users/guest_u
+A /etc/selinux/targeted/contexts/users/root
+A /etc/selinux/targeted/contexts/users/staff_u
+A /etc/selinux/targeted/contexts/users/sysadm_u
+A /etc/selinux/targeted/contexts/users/unconfined_u
+A /etc/selinux/targeted/contexts/users/user_u
+A /etc/selinux/targeted/contexts/users/xguest_u
+A /etc/selinux/targeted/contexts/customizable_types
+A /etc/selinux/targeted/contexts/dbus_contexts
+A /etc/selinux/targeted/contexts/default_contexts
+A /etc/selinux/targeted/contexts/default_type
+A /etc/selinux/targeted/contexts/failsafe_context
+A /etc/selinux/targeted/contexts/initrc_context
+A /etc/selinux/targeted/contexts/lxc_contexts
+A /etc/selinux/targeted/contexts/openssh_contexts
+A /etc/selinux/targeted/contexts/removable_context
+A /etc/selinux/targeted/contexts/securetty_types
+A /etc/selinux/targeted/contexts/sepgsql_contexts
+A /etc/selinux/targeted/contexts/snapperd_contexts
+A /etc/selinux/targeted/contexts/systemd_contexts
+A /etc/selinux/targeted/contexts/userhelper_context
+A /etc/selinux/targeted/contexts/virtual_domain_context
+A /etc/selinux/targeted/contexts/virtual_image_context
+A /etc/selinux/targeted/contexts/x_contexts
+A /etc/selinux/targeted/policy/policy.31
+A /etc/selinux/semanage.conf
+A /etc/selinux/config
+A /etc/modprobe.d/mlx4.conf
+A /etc/modprobe.d/truescale.conf
+A /etc/modprobe.d/firewalld-sysctls.conf
+A /etc/modprobe.d/tuned.conf
+A /etc/modprobe.d/lockd.conf
+A /etc/modprobe.d/nofloppy.conf
+A /etc/crypto-policies/state/CURRENT.pol
+A /etc/crypto-policies/state/current
+A /etc/crypto-policies/config
+A /etc/cron.hourly/0anacron
+A /etc/cron.d/0hourly
+/etc/polkit-1/rules.d: scandir: [Errno 13] Permission denied: '/etc/polkit-1/rules.d'
+E /etc/polkit-1/rules.d
+/etc/polkit-1/localauthority: scandir: [Errno 13] Permission denied: '/etc/polkit-1/localauthority'
+E /etc/polkit-1/localauthority
+A /etc/ssh/moduli
+A /etc/ssh/ssh_config.d/05-redhat.conf
+A /etc/ssh/ssh_config
+/etc/ssh/ssh_host_ed25519_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ed25519_key'
+E /etc/ssh/ssh_host_ed25519_key
+A /etc/ssh/ssh_host_ed25519_key.pub
+/etc/ssh/ssh_host_ecdsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ecdsa_key'
+E /etc/ssh/ssh_host_ecdsa_key
+A /etc/ssh/ssh_host_ecdsa_key.pub
+/etc/ssh/ssh_host_rsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_rsa_key'
+E /etc/ssh/ssh_host_rsa_key
+A /etc/ssh/ssh_host_rsa_key.pub
+/etc/ssh/sshd_config: open: [Errno 13] Permission denied: '/etc/ssh/sshd_config'
+E /etc/ssh/sshd_config
+A /etc/rwtab.d/logrotate
+A /etc/rwtab.d/sssd
+A /etc/samba/lmhosts
+A /etc/samba/smb.conf
+A /etc/samba/smb.conf.example
+/etc/dhcp: scandir: [Errno 13] Permission denied: '/etc/dhcp'
+E /etc/dhcp
+A /etc/rhsm/syspurpose/valid_fields.json
+/etc/nftables: scandir: [Errno 13] Permission denied: '/etc/nftables'
+E /etc/nftables
+/etc/audit: scandir: [Errno 13] Permission denied: '/etc/audit'
+E /etc/audit
+A /etc/qemu-ga/fsfreeze-hook
+/etc/sudoers.d: scandir: [Errno 13] Permission denied: '/etc/sudoers.d'
+E /etc/sudoers.d
+------------------------------------------------------------------------------
+Archive name: client-daily-2021-11-14T02:55:01
+Archive fingerprint: 48127e958b13eab51e0375595d36af9b4f584e5885623524cfba8dcab53df752
+Time (start): Sun, 2021-11-14 02:55:02
+Time (end):   Sun, 2021-11-14 02:55:03
+Duration: 0.90 seconds
+Number of files: 395
+Utilization of max. archive size: 0%
+------------------------------------------------------------------------------
+                       Original size      Compressed size    Deduplicated size
+This archive:               21.10 MB              5.31 MB              5.30 MB
+All archives:               21.10 MB              5.31 MB              5.30 MB
+
+                       Unique chunks         Total chunks
+Chunk index:                     385                  393
+------------------------------------------------------------------------------
+terminating with warning status, rc 1
+Keeping archive: client-daily-2021-11-14T02:55:01     Sun, 2021-11-14 02:55:02 [48127e958b13eab51e0375595d36af9b4f584e5885623524cfba8dcab53df752]
+terminating with success status, rc 0
+Creating archive at "ssh://borg@server/var/backup/client::client-daily-2021-11-14T03:00:02"
+/etc/shadow: open: [Errno 13] Permission denied: '/etc/shadow'
+E /etc/shadow
+/etc/crypttab: open: [Errno 13] Permission denied: '/etc/crypttab'
+E /etc/crypttab
+/etc/gshadow: open: [Errno 13] Permission denied: '/etc/gshadow'
+E /etc/gshadow
+/etc/gshadow-: open: [Errno 13] Permission denied: '/etc/gshadow-'
+E /etc/gshadow-
+/etc/shadow-: open: [Errno 13] Permission denied: '/etc/shadow-'
+E /etc/shadow-
+/etc/libaudit.conf: open: [Errno 13] Permission denied: '/etc/libaudit.conf'
+E /etc/libaudit.conf
+/etc/.pwd.lock: open: [Errno 13] Permission denied: '/etc/.pwd.lock'
+E /etc/.pwd.lock
+/etc/tcsd.conf: open: [Errno 13] Permission denied: '/etc/tcsd.conf'
+E /etc/tcsd.conf
+/etc/security/opasswd: open: [Errno 13] Permission denied: '/etc/security/opasswd'
+E /etc/security/opasswd
+/etc/chrony.keys: open: [Errno 13] Permission denied: '/etc/chrony.keys'
+E /etc/chrony.keys
+/etc/sudo-ldap.conf: open: [Errno 13] Permission denied: '/etc/sudo-ldap.conf'
+E /etc/sudo-ldap.conf
+/etc/sudo.conf: open: [Errno 13] Permission denied: '/etc/sudo.conf'
+E /etc/sudo.conf
+/etc/sudoers: open: [Errno 13] Permission denied: '/etc/sudoers'
+E /etc/sudoers
+A /etc/ld.so.cache
+/etc/pki/rsyslog: scandir: [Errno 13] Permission denied: '/etc/pki/rsyslog'
+E /etc/pki/rsyslog
+/etc/sysconfig/ip6tables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ip6tables-config'
+E /etc/sysconfig/ip6tables-config
+/etc/sysconfig/iptables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/iptables-config'
+E /etc/sysconfig/iptables-config
+/etc/sysconfig/ebtables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ebtables-config'
+E /etc/sysconfig/ebtables-config
+/etc/sysconfig/nftables.conf: open: [Errno 13] Permission denied: '/etc/sysconfig/nftables.conf'
+E /etc/sysconfig/nftables.conf
+/etc/sysconfig/sshd: open: [Errno 13] Permission denied: '/etc/sysconfig/sshd'
+E /etc/sysconfig/sshd
+/etc/grub.d: scandir: [Errno 13] Permission denied: '/etc/grub.d'
+E /etc/grub.d
+/etc/sssd: scandir: [Errno 13] Permission denied: '/etc/sssd'
+E /etc/sssd
+/etc/gssproxy/99-nfs-client.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/99-nfs-client.conf'
+E /etc/gssproxy/99-nfs-client.conf
+/etc/gssproxy/gssproxy.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/gssproxy.conf'
+E /etc/gssproxy/gssproxy.conf
+/etc/gssproxy/24-nfs-server.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/24-nfs-server.conf'
+E /etc/gssproxy/24-nfs-server.conf
+/etc/firewalld: scandir: [Errno 13] Permission denied: '/etc/firewalld'
+E /etc/firewalld
+/etc/polkit-1/rules.d: scandir: [Errno 13] Permission denied: '/etc/polkit-1/rules.d'
+E /etc/polkit-1/rules.d
+/etc/polkit-1/localauthority: scandir: [Errno 13] Permission denied: '/etc/polkit-1/localauthority'
+E /etc/polkit-1/localauthority
+/etc/ssh/ssh_host_ed25519_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ed25519_key'
+E /etc/ssh/ssh_host_ed25519_key
+/etc/ssh/ssh_host_ecdsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ecdsa_key'
+E /etc/ssh/ssh_host_ecdsa_key
+/etc/ssh/ssh_host_rsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_rsa_key'
+E /etc/ssh/ssh_host_rsa_key
+/etc/ssh/sshd_config: open: [Errno 13] Permission denied: '/etc/ssh/sshd_config'
+E /etc/ssh/sshd_config
+/etc/dhcp: scandir: [Errno 13] Permission denied: '/etc/dhcp'
+E /etc/dhcp
+/etc/nftables: scandir: [Errno 13] Permission denied: '/etc/nftables'
+E /etc/nftables
+/etc/audit: scandir: [Errno 13] Permission denied: '/etc/audit'
+E /etc/audit
+/etc/sudoers.d: scandir: [Errno 13] Permission denied: '/etc/sudoers.d'
+E /etc/sudoers.d
+------------------------------------------------------------------------------
+Archive name: client-daily-2021-11-14T03:00:02
+Archive fingerprint: b3d69237c2fb85751a7d1973728ef244658746d95bfcb1a7f877ad3751290df3
+Time (start): Sun, 2021-11-14 03:00:02
+Time (end):   Sun, 2021-11-14 03:00:02
+Duration: 0.10 seconds
+Number of files: 395
+Utilization of max. archive size: 0%
+------------------------------------------------------------------------------
+                       Original size      Compressed size    Deduplicated size
+This archive:               21.10 MB              5.31 MB             36.34 kB
+All archives:               42.20 MB             10.62 MB              5.34 MB
+
+                       Unique chunks         Total chunks
+Chunk index:                     387                  786
+------------------------------------------------------------------------------
+terminating with warning status, rc 1
+Keeping archive: client-daily-2021-11-14T03:00:02     Sun, 2021-11-14 03:00:02 [b3d69237c2fb85751a7d1973728ef244658746d95bfcb1a7f877ad3751290df3]
+Pruning archive: client-daily-2021-11-14T02:55:01     Sun, 2021-11-14 02:55:02 [48127e958b13eab51e0375595d36af9b4f584e5885623524cfba8dcab53df752] (1/1)
+terminating with success status, rc 0
+Creating archive at "ssh://borg@server/var/backup/client::client-daily-2021-11-14T03:05:01"
+/etc/shadow: open: [Errno 13] Permission denied: '/etc/shadow'
+E /etc/shadow
+/etc/crypttab: open: [Errno 13] Permission denied: '/etc/crypttab'
+E /etc/crypttab
+/etc/gshadow: open: [Errno 13] Permission denied: '/etc/gshadow'
+E /etc/gshadow
+/etc/gshadow-: open: [Errno 13] Permission denied: '/etc/gshadow-'
+E /etc/gshadow-
+/etc/shadow-: open: [Errno 13] Permission denied: '/etc/shadow-'
+E /etc/shadow-
+/etc/libaudit.conf: open: [Errno 13] Permission denied: '/etc/libaudit.conf'
+E /etc/libaudit.conf
+/etc/.pwd.lock: open: [Errno 13] Permission denied: '/etc/.pwd.lock'
+E /etc/.pwd.lock
+/etc/tcsd.conf: open: [Errno 13] Permission denied: '/etc/tcsd.conf'
+E /etc/tcsd.conf
+/etc/security/opasswd: open: [Errno 13] Permission denied: '/etc/security/opasswd'
+E /etc/security/opasswd
+/etc/chrony.keys: open: [Errno 13] Permission denied: '/etc/chrony.keys'
+E /etc/chrony.keys
+/etc/sudo-ldap.conf: open: [Errno 13] Permission denied: '/etc/sudo-ldap.conf'
+E /etc/sudo-ldap.conf
+/etc/sudo.conf: open: [Errno 13] Permission denied: '/etc/sudo.conf'
+E /etc/sudo.conf
+/etc/sudoers: open: [Errno 13] Permission denied: '/etc/sudoers'
+E /etc/sudoers
+A /etc/ld.so.cache
+/etc/pki/rsyslog: scandir: [Errno 13] Permission denied: '/etc/pki/rsyslog'
+E /etc/pki/rsyslog
+/etc/sysconfig/ip6tables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ip6tables-config'
+E /etc/sysconfig/ip6tables-config
+/etc/sysconfig/iptables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/iptables-config'
+E /etc/sysconfig/iptables-config
+/etc/sysconfig/ebtables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ebtables-config'
+E /etc/sysconfig/ebtables-config
+/etc/sysconfig/nftables.conf: open: [Errno 13] Permission denied: '/etc/sysconfig/nftables.conf'
+E /etc/sysconfig/nftables.conf
+/etc/sysconfig/sshd: open: [Errno 13] Permission denied: '/etc/sysconfig/sshd'
+E /etc/sysconfig/sshd
+/etc/grub.d: scandir: [Errno 13] Permission denied: '/etc/grub.d'
+E /etc/grub.d
+/etc/sssd: scandir: [Errno 13] Permission denied: '/etc/sssd'
+E /etc/sssd
+/etc/gssproxy/99-nfs-client.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/99-nfs-client.conf'
+E /etc/gssproxy/99-nfs-client.conf
+/etc/gssproxy/gssproxy.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/gssproxy.conf'
+E /etc/gssproxy/gssproxy.conf
+/etc/gssproxy/24-nfs-server.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/24-nfs-server.conf'
+E /etc/gssproxy/24-nfs-server.conf
+/etc/firewalld: scandir: [Errno 13] Permission denied: '/etc/firewalld'
+E /etc/firewalld
+/etc/polkit-1/rules.d: scandir: [Errno 13] Permission denied: '/etc/polkit-1/rules.d'
+E /etc/polkit-1/rules.d
+/etc/polkit-1/localauthority: scandir: [Errno 13] Permission denied: '/etc/polkit-1/localauthority'
+E /etc/polkit-1/localauthority
+/etc/ssh/ssh_host_ed25519_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ed25519_key'
+E /etc/ssh/ssh_host_ed25519_key
+/etc/ssh/ssh_host_ecdsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ecdsa_key'
+E /etc/ssh/ssh_host_ecdsa_key
+/etc/ssh/ssh_host_rsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_rsa_key'
+E /etc/ssh/ssh_host_rsa_key
+/etc/ssh/sshd_config: open: [Errno 13] Permission denied: '/etc/ssh/sshd_config'
+E /etc/ssh/sshd_config
+/etc/dhcp: scandir: [Errno 13] Permission denied: '/etc/dhcp'
+E /etc/dhcp
+/etc/nftables: scandir: [Errno 13] Permission denied: '/etc/nftables'
+E /etc/nftables
+/etc/audit: scandir: [Errno 13] Permission denied: '/etc/audit'
+E /etc/audit
+/etc/sudoers.d: scandir: [Errno 13] Permission denied: '/etc/sudoers.d'
+E /etc/sudoers.d
+------------------------------------------------------------------------------
+Archive name: client-daily-2021-11-14T03:05:01
+Archive fingerprint: 11eef72a87035d66af328ab3f4e55f1cef0483f563ef82ba1da4839abe3f454e
+Time (start): Sun, 2021-11-14 03:05:02
+Time (end):   Sun, 2021-11-14 03:05:02
+Duration: 0.10 seconds
+Number of files: 394
+Utilization of max. archive size: 0%
+------------------------------------------------------------------------------
+                       Original size      Compressed size    Deduplicated size
+This archive:               21.10 MB              5.31 MB             36.27 kB
+All archives:               42.20 MB             10.62 MB              5.34 MB
+
+                       Unique chunks         Total chunks
+Chunk index:                     387                  785
+------------------------------------------------------------------------------
+terminating with warning status, rc 1
+Keeping archive: client-daily-2021-11-14T03:05:01     Sun, 2021-11-14 03:05:02 [11eef72a87035d66af328ab3f4e55f1cef0483f563ef82ba1da4839abe3f454e]
+Pruning archive: client-daily-2021-11-14T03:00:02     Sun, 2021-11-14 03:00:02 [b3d69237c2fb85751a7d1973728ef244658746d95bfcb1a7f877ad3751290df3] (1/1)
+terminating with success status, rc 0
+Creating archive at "ssh://borg@server/var/backup/client::client-daily-2021-11-14T03:10:01"
+/etc/shadow: open: [Errno 13] Permission denied: '/etc/shadow'
+E /etc/shadow
+/etc/crypttab: open: [Errno 13] Permission denied: '/etc/crypttab'
+E /etc/crypttab
+/etc/gshadow: open: [Errno 13] Permission denied: '/etc/gshadow'
+E /etc/gshadow
+/etc/gshadow-: open: [Errno 13] Permission denied: '/etc/gshadow-'
+E /etc/gshadow-
+/etc/shadow-: open: [Errno 13] Permission denied: '/etc/shadow-'
+E /etc/shadow-
+/etc/libaudit.conf: open: [Errno 13] Permission denied: '/etc/libaudit.conf'
+E /etc/libaudit.conf
+/etc/.pwd.lock: open: [Errno 13] Permission denied: '/etc/.pwd.lock'
+E /etc/.pwd.lock
+/etc/tcsd.conf: open: [Errno 13] Permission denied: '/etc/tcsd.conf'
+E /etc/tcsd.conf
+/etc/security/opasswd: open: [Errno 13] Permission denied: '/etc/security/opasswd'
+E /etc/security/opasswd
+/etc/chrony.keys: open: [Errno 13] Permission denied: '/etc/chrony.keys'
+E /etc/chrony.keys
+/etc/sudo-ldap.conf: open: [Errno 13] Permission denied: '/etc/sudo-ldap.conf'
+E /etc/sudo-ldap.conf
+/etc/sudo.conf: open: [Errno 13] Permission denied: '/etc/sudo.conf'
+E /etc/sudo.conf
+/etc/sudoers: open: [Errno 13] Permission denied: '/etc/sudoers'
+E /etc/sudoers
+A /etc/ld.so.cache
+/etc/pki/rsyslog: scandir: [Errno 13] Permission denied: '/etc/pki/rsyslog'
+E /etc/pki/rsyslog
+/etc/sysconfig/ip6tables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ip6tables-config'
+E /etc/sysconfig/ip6tables-config
+/etc/sysconfig/iptables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/iptables-config'
+E /etc/sysconfig/iptables-config
+/etc/sysconfig/ebtables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ebtables-config'
+E /etc/sysconfig/ebtables-config
+/etc/sysconfig/nftables.conf: open: [Errno 13] Permission denied: '/etc/sysconfig/nftables.conf'
+E /etc/sysconfig/nftables.conf
+/etc/sysconfig/sshd: open: [Errno 13] Permission denied: '/etc/sysconfig/sshd'
+E /etc/sysconfig/sshd
+/etc/grub.d: scandir: [Errno 13] Permission denied: '/etc/grub.d'
+E /etc/grub.d
+/etc/sssd: scandir: [Errno 13] Permission denied: '/etc/sssd'
+E /etc/sssd
+/etc/gssproxy/99-nfs-client.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/99-nfs-client.conf'
+E /etc/gssproxy/99-nfs-client.conf
+/etc/gssproxy/gssproxy.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/gssproxy.conf'
+E /etc/gssproxy/gssproxy.conf
+/etc/gssproxy/24-nfs-server.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/24-nfs-server.conf'
+E /etc/gssproxy/24-nfs-server.conf
+/etc/firewalld: scandir: [Errno 13] Permission denied: '/etc/firewalld'
+E /etc/firewalld
+/etc/polkit-1/rules.d: scandir: [Errno 13] Permission denied: '/etc/polkit-1/rules.d'
+E /etc/polkit-1/rules.d
+/etc/polkit-1/localauthority: scandir: [Errno 13] Permission denied: '/etc/polkit-1/localauthority'
+E /etc/polkit-1/localauthority
+/etc/ssh/ssh_host_ed25519_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ed25519_key'
+E /etc/ssh/ssh_host_ed25519_key
+/etc/ssh/ssh_host_ecdsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ecdsa_key'
+E /etc/ssh/ssh_host_ecdsa_key
+/etc/ssh/ssh_host_rsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_rsa_key'
+E /etc/ssh/ssh_host_rsa_key
+/etc/ssh/sshd_config: open: [Errno 13] Permission denied: '/etc/ssh/sshd_config'
+E /etc/ssh/sshd_config
+/etc/dhcp: scandir: [Errno 13] Permission denied: '/etc/dhcp'
+E /etc/dhcp
+/etc/nftables: scandir: [Errno 13] Permission denied: '/etc/nftables'
+E /etc/nftables
+/etc/audit: scandir: [Errno 13] Permission denied: '/etc/audit'
+E /etc/audit
+/etc/sudoers.d: scandir: [Errno 13] Permission denied: '/etc/sudoers.d'
+E /etc/sudoers.d
+------------------------------------------------------------------------------
+Archive name: client-daily-2021-11-14T03:10:01
+Archive fingerprint: 33939727eac0b853f398c85cbb9778e2ef0a3568a30405e894a38035bef58027
+Time (start): Sun, 2021-11-14 03:10:02
+Time (end):   Sun, 2021-11-14 03:10:02
+Duration: 0.09 seconds
+Number of files: 394
+Utilization of max. archive size: 0%
+------------------------------------------------------------------------------
+                       Original size      Compressed size    Deduplicated size
+This archive:               21.10 MB              5.31 MB                531 B
+All archives:               42.19 MB             10.62 MB              5.30 MB
+
+                       Unique chunks         Total chunks
+Chunk index:                     385                  784
+------------------------------------------------------------------------------
+terminating with warning status, rc 1
+Keeping archive: client-daily-2021-11-14T03:10:01     Sun, 2021-11-14 03:10:02 [33939727eac0b853f398c85cbb9778e2ef0a3568a30405e894a38035bef58027]
+Pruning archive: client-daily-2021-11-14T03:05:01     Sun, 2021-11-14 03:05:02 [11eef72a87035d66af328ab3f4e55f1cef0483f563ef82ba1da4839abe3f454e] (1/1)
+terminating with success status, rc 0
+Creating archive at "ssh://borg@server/var/backup/client::client-daily-2021-11-14T03:15:02"
+/etc/shadow: open: [Errno 13] Permission denied: '/etc/shadow'
+E /etc/shadow
+/etc/crypttab: open: [Errno 13] Permission denied: '/etc/crypttab'
+E /etc/crypttab
+/etc/gshadow: open: [Errno 13] Permission denied: '/etc/gshadow'
+E /etc/gshadow
+/etc/gshadow-: open: [Errno 13] Permission denied: '/etc/gshadow-'
+E /etc/gshadow-
+/etc/shadow-: open: [Errno 13] Permission denied: '/etc/shadow-'
+E /etc/shadow-
+/etc/libaudit.conf: open: [Errno 13] Permission denied: '/etc/libaudit.conf'
+E /etc/libaudit.conf
+/etc/.pwd.lock: open: [Errno 13] Permission denied: '/etc/.pwd.lock'
+E /etc/.pwd.lock
+/etc/tcsd.conf: open: [Errno 13] Permission denied: '/etc/tcsd.conf'
+E /etc/tcsd.conf
+/etc/security/opasswd: open: [Errno 13] Permission denied: '/etc/security/opasswd'
+E /etc/security/opasswd
+/etc/chrony.keys: open: [Errno 13] Permission denied: '/etc/chrony.keys'
+E /etc/chrony.keys
+/etc/sudo-ldap.conf: open: [Errno 13] Permission denied: '/etc/sudo-ldap.conf'
+E /etc/sudo-ldap.conf
+/etc/sudo.conf: open: [Errno 13] Permission denied: '/etc/sudo.conf'
+E /etc/sudo.conf
+/etc/sudoers: open: [Errno 13] Permission denied: '/etc/sudoers'
+E /etc/sudoers
+A /etc/ld.so.cache
+/etc/pki/rsyslog: scandir: [Errno 13] Permission denied: '/etc/pki/rsyslog'
+E /etc/pki/rsyslog
+/etc/sysconfig/ip6tables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ip6tables-config'
+E /etc/sysconfig/ip6tables-config
+/etc/sysconfig/iptables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/iptables-config'
+E /etc/sysconfig/iptables-config
+/etc/sysconfig/ebtables-config: open: [Errno 13] Permission denied: '/etc/sysconfig/ebtables-config'
+E /etc/sysconfig/ebtables-config
+/etc/sysconfig/nftables.conf: open: [Errno 13] Permission denied: '/etc/sysconfig/nftables.conf'
+E /etc/sysconfig/nftables.conf
+/etc/sysconfig/sshd: open: [Errno 13] Permission denied: '/etc/sysconfig/sshd'
+E /etc/sysconfig/sshd
+/etc/grub.d: scandir: [Errno 13] Permission denied: '/etc/grub.d'
+E /etc/grub.d
+/etc/sssd: scandir: [Errno 13] Permission denied: '/etc/sssd'
+E /etc/sssd
+/etc/gssproxy/99-nfs-client.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/99-nfs-client.conf'
+E /etc/gssproxy/99-nfs-client.conf
+/etc/gssproxy/gssproxy.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/gssproxy.conf'
+E /etc/gssproxy/gssproxy.conf
+/etc/gssproxy/24-nfs-server.conf: open: [Errno 13] Permission denied: '/etc/gssproxy/24-nfs-server.conf'
+E /etc/gssproxy/24-nfs-server.conf
+/etc/firewalld: scandir: [Errno 13] Permission denied: '/etc/firewalld'
+E /etc/firewalld
+/etc/polkit-1/rules.d: scandir: [Errno 13] Permission denied: '/etc/polkit-1/rules.d'
+E /etc/polkit-1/rules.d
+/etc/polkit-1/localauthority: scandir: [Errno 13] Permission denied: '/etc/polkit-1/localauthority'
+E /etc/polkit-1/localauthority
+/etc/ssh/ssh_host_ed25519_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ed25519_key'
+E /etc/ssh/ssh_host_ed25519_key
+/etc/ssh/ssh_host_ecdsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_ecdsa_key'
+E /etc/ssh/ssh_host_ecdsa_key
+/etc/ssh/ssh_host_rsa_key: open: [Errno 13] Permission denied: '/etc/ssh/ssh_host_rsa_key'
+E /etc/ssh/ssh_host_rsa_key
+/etc/ssh/sshd_config: open: [Errno 13] Permission denied: '/etc/ssh/sshd_config'
+E /etc/ssh/sshd_config
+/etc/dhcp: scandir: [Errno 13] Permission denied: '/etc/dhcp'
+E /etc/dhcp
+/etc/nftables: scandir: [Errno 13] Permission denied: '/etc/nftables'
+E /etc/nftables
+/etc/audit: scandir: [Errno 13] Permission denied: '/etc/audit'
+E /etc/audit
+/etc/sudoers.d: scandir: [Errno 13] Permission denied: '/etc/sudoers.d'
+E /etc/sudoers.d
+------------------------------------------------------------------------------
+Archive name: client-daily-2021-11-14T03:15:02
+Archive fingerprint: 83ffab1e77294d1c412197406834000881886adbe2d53c5ab89c74244f37ce97
+Time (start): Sun, 2021-11-14 03:15:03
+Time (end):   Sun, 2021-11-14 03:15:03
+Duration: 0.09 seconds
+Number of files: 394
+Utilization of max. archive size: 0%
+------------------------------------------------------------------------------
+                       Original size      Compressed size    Deduplicated size
+This archive:               21.10 MB              5.31 MB                533 B
+All archives:               42.19 MB             10.62 MB              5.30 MB
+
+                       Unique chunks         Total chunks
+Chunk index:                     385                  784
+------------------------------------------------------------------------------
+terminating with warning status, rc 1
+Keeping archive: client-daily-2021-11-14T03:15:02     Sun, 2021-11-14 03:15:03 [83ffab1e77294d1c412197406834000881886adbe2d53c5ab89c74244f37ce97]
+Pruning archive: client-daily-2021-11-14T03:10:01     Sun, 2021-11-14 03:10:02 [33939727eac0b853f398c85cbb9778e2ef0a3568a30405e894a38035bef58027] (1/1)
+terminating with success status, rc 0
