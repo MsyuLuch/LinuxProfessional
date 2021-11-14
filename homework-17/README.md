@@ -117,7 +117,7 @@ borg prune \
 ```
 borg create
  
-# подробное логгирование процесса создания
+# подробное логгирование процесса создания архива
   --verbose
  
 # копируем только новые и изменненные файлы
@@ -138,16 +138,16 @@ borg create
 # исключаем директории с caches
   --exclude-caches
   
-# шаблон создания имени архива
+# шаблон имени архива
   ::'{hostname}-monthly-{now}
  
-# пути до архивируемых директорий
+# что архивируем
 /path/to/data
 ```
 
 Чтобы просмотреть список сохраненных архивов:
 ```
-[borg@client etc]$ borg list borg@server:/var/backup/client                                     
+[borg@client ~]$ borg list borg@server:/var/backup/client                                     
 Enter passphrase for key ssh://borg@server/var/backup/client:
 client-daily-2021-11-14T03:15:02     Sun, 2021-11-14 03:15:03 [83ffab1e77294d1c41219740683400088adbe2d53c5ab89c74244f37ce97]
 ```
@@ -158,4 +158,5 @@ client-daily-2021-11-14T03:15:02     Sun, 2021-11-14 03:15:03 [83ffab1e77294d1c4
 Enter passphrase for key ssh://borg@server/var/backup/client:
 etc/crontab
 ```
+
 
