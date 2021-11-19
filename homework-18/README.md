@@ -94,6 +94,7 @@ Office2----/
 |  свободная    |   192.168.0.128/25	|   192.168.0.129    |   192.168.0.254 	|   126	|   192.168.0.255	|   255.255.255.128  	|
 
 Схема сети:
+
 ![Schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-18/schema.jpg)
 
 Выполняем Vagrantfile
