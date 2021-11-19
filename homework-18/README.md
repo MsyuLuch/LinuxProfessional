@@ -183,7 +183,7 @@ Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 192.168.253.0   0.0.0.0         255.255.255.252 U         0 0          0 eth1
 ```
 
-Проверяем маршрут пакетов для серверов
+Проверяем маршрут пакетов до `ya.ru` для серверов
 
 office1Server:
 ```
