@@ -42,7 +42,9 @@ Vagrantfile с начальным  построением сети
 192.168.0.64/26 - wifi
 
 Office1 ---\
+              
               -----> Central --IRouter --> internet
+              
 Office2----/
 
 **Теоретическая часть**
