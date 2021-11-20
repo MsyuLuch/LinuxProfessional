@@ -37,7 +37,7 @@
   lineinfile:
     path: /etc/sysconfig/network-scripts/ifcfg-eth0
     line: DEFROUTE=no
-  notify: reboot host
+  #notify: reboot host
   when: '"inetRouter" not in inventory_hostname'
 
 - name: Template additional networks
@@ -46,7 +46,7 @@
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}"
     mode: "0644"
   loop: "{{ interfaces }}"
-  notify: reboot host
+  #notify: reboot host
   when: 
     - '"inetRouter" not in inventory_hostname'
     - '"centralRouter" in inventory_hostname'
@@ -67,3 +67,9 @@
     owner: root
     group: root
     mode: "0644"
+
+- name: Restart network service
+  ansible.builtin.service:
+    name: network
+    state: restarted
+  when: '"inetRouter" not in inventory_hostname'
