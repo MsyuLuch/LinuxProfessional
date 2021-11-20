@@ -1,0 +1,69 @@
+---
+- name: Install a list of packages
+  become: yes
+  yum:
+    name:
+      - net-tools
+      - traceroute
+    state: present
+
+- name: Set sysctl params
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_file: /etc/sysctl.conf
+    ignoreerrors: yes
+    reload: yes
+  with_dict: "{{ sysctl_params }}"
+  when: '"Server" not in inventory_hostname'
+
+- name: Set iptables rules
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    destination: "!192.168.0.0/16"
+    out_interface: eth0
+    jump: MASQUERADE
+  become: yes
+  when: '"inetRouter" in inventory_hostname'
+
+- name: Create static route to internal network
+  shell: "ip route add 192.168.0.0/16 via 192.168.255.2"
+  ignore_errors: yes
+  when: '"inetRouter" in inventory_hostname'
+
+- name: Disable default route for eth0
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    line: DEFROUTE=no
+  notify: reboot host
+  when: '"inetRouter" not in inventory_hostname'
+
+- name: Template additional networks
+  template:
+    src: ifcfg-eth.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}"
+    mode: "0644"
+  loop: "{{ interfaces }}"
+  notify: reboot host
+  when: 
+    - '"inetRouter" not in inventory_hostname'
+    - '"centralRouter" in inventory_hostname'
+
+- name: Add route
+  lineinfile:
+    dest: /etc/sysconfig/network-scripts/route-{{ item.device }}
+    line: "{{ item.dest }} via {{ item.via }} dev {{ item.dev }}"
+    create: yes
+    owner: root
+  when: '"centralRouter" in inventory_hostname'
+  loop: "{{ routes }}"    
+
+- name: Copy hosts file
+  copy:
+    src: files/hosts
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: "0644"

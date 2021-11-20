@@ -1,0 +1,85 @@
+---
+- name: Provision inetRouter
+  hosts: inetRouter
+  become: yes
+
+  vars:
+    sysctl_params:
+      net.ipv4.ip_forward: "1"
+
+  roles:
+    - network
+
+- name: Provision CentralRouter
+  hosts: centralRouter
+  become: yes
+
+  vars:
+    sysctl_params:
+      net.ipv4.ip_forward: "1"
+      net.ipv4.conf.all.forwarding: "1"
+    interfaces:
+      - device: "eth1:0"
+        ipaddr: "192.168.253.1"
+        netmask: "255.255.255.252"
+      - device: "eth1:1"
+        ipaddr: "192.168.254.1"
+        netmask: "255.255.255.252"
+    routes:
+      - dest: "192.168.1.0/24"
+        via: "192.168.253.2"
+        dev: "eth1:0"
+        device: "eth1"
+      - dest: "192.168.2.0/24"
+        via: "192.168.254.2"
+        dev: "eth1:1"
+        device: "eth1"
+
+  roles:
+    - network
+
+- name: Provision CentralServer
+  hosts: centralServer
+  become: yes
+
+  roles:
+    - network
+
+- name: Provision Office1Router
+  hosts: office1Router
+  become: yes
+
+  vars:
+    sysctl_params:
+      net.ipv4.ip_forward: "1"
+      net.ipv4.conf.all.forwarding: "1"
+
+  roles:
+    - network
+
+- name: Provision Office1Server
+  hosts: office1Server
+  become: yes
+
+  roles:
+    - network
+
+- name: Provision Office2Router
+  hosts: office2Router
+  become: yes
+
+  vars:
+    sysctl_params:
+      net.ipv4.ip_forward: "1"
+      net.ipv4.conf.all.forwarding: "1"
+
+  roles:
+    - network
+
+- name: Provision Office2Server
+  hosts: office2Server
+  become: yes
+
+  roles: 
+    - network
+

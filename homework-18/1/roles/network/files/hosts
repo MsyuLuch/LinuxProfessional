@@ -1,0 +1,10 @@
+127.0.0.1   localhost
+::1         localhost
+
+192.168.255.1 inetRouter
+192.168.0.1 centralRouter
+192.168.0.10 centralServer
+192.168.2.1 office1Router
+192.168.2.10 office1Server
+192.168.1.1 office2Router
+192.168.1.10 office2Server

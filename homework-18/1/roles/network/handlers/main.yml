@@ -1,0 +1,11 @@
+---
+- name: restart network
+  service: 
+    name: network
+    state: restarted
+  register: restart_status
+  until: restart_status is succeeded
+
+- name: reboot host
+  reboot:
+    reboot_timeout: 3600
