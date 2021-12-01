@@ -1,0 +1,19 @@
+---
+# tasks file for 
+
+  - name: Install tftp-server
+    yum: 
+      name: tftp-server
+      state: present
+    notify: Restart tftp.service
+
+  - name: Enable tftp.service
+    systemd:
+      name: tftp.service
+      state: restarted
+      enabled: yes
+
+  - name: syslinux-tftpboot
+    yum:
+      name: syslinux-tftpboot.noarch
+      state: installed

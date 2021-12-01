@@ -1,0 +1,8 @@
+---
+# handlers file
+ - name: Restart dhcp
+   systemd:
+     name: dhcpd
+     state: restarted
+     enabled: yes
+

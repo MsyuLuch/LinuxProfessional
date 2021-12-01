@@ -1,0 +1,10 @@
+---
+  - name: PXE server configuration 
+    hosts: pxeserver
+    become: true
+
+    roles:
+      - dhcp
+      - tftp
+      - pxe_server
+      - web-nginx

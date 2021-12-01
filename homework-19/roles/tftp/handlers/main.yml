@@ -1,0 +1,12 @@
+---
+# handlers file
+ - name: Restart tftp.service
+   systemd:
+     name: tftp.service
+     state: restarted
+     enabled: yes
+
+ - name: Reload tftp.service
+   systemd:
+     name: tftp.service
+     state: reloaded

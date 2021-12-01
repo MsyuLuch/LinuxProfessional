@@ -1,0 +1,5 @@
+---
+# vars file for web-nginx
+nginx_listen_port: 80
+
+nginx_html_directory: '/mnt'
