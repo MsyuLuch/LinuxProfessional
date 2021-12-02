@@ -74,12 +74,12 @@ vesamenu.c32
         LABEL linux
           menu label ^Install system
           kernel images/CentOS-7/vmlinuz
-          append initrd=images/CentOS-7/initrd.img ip=enp0s3:dhcp inst.repo=http://10.0.0.10/centos7-install
+          append initrd=images/CentOS-7/initrd.img ip=enp0s3:dhcp inst.repo=http://10.0.0.20/centos7-install
         LABEL linux-auto
           menu label ^Auto install system
           menu default
           kernel images/CentOS-7/vmlinuz
-          append initrd=images/CentOS-7/initrd.img ip=enp0s3:dhcp inst.repo=http://10.0.0.10/centos7-install inst.ks=http://10.0.0.10/ks.cfg
+          append initrd=images/CentOS-7/initrd.img ip=enp0s3:dhcp inst.repo=http://10.0.0.20/centos7-install inst.ks=http://10.0.0.20/ks.cfg
         LABEL vesa
           menu label Install system with ^basic video driver
           kernel images/CentOS-7/vmlinuz
