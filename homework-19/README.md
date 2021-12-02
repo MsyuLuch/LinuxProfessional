@@ -34,23 +34,18 @@ root /mnt;
 ``` 
 - Установим и настроим DHCP. Изменим конфигурационный файл и запустим DHCP сервер:
 ```
-option space pxelinux;
-option pxelinux.magic code 208 = string;
-option pxelinux.configfile code 209 = text;
-option pxelinux.pathprefix code 210 = text;
-option pxelinux.reboottime code 211 = unsigned integer 32;
-option architecture-type code 93 = unsigned integer 16;
-subnet {{ dhcp_subnet }} netmask {{ dhcp_mask }} {
-range {{ dhcp_range_from }} {{ dhcp_range_to }};
-class "pxeclients" {
-       match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
-       next-server {{ ip_pxeserver }};
-       if option architecture-type = 00:07 {
-       filename "uefi/shim.efi";
-       } else {
-       filename "pxelinux/pxelinux.0";
-        }
-       }
+subnet 10.0.0.0 netmask 255.255.255.0 {
+	#option routers 10.0.0.254;
+	range 10.0.0.100 10.0.0.120;
+	class "pxeclients" {
+	  match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
+	  next-server 10.0.0.20;
+	  if option architecture-type = 00:07 {
+	    filename "uefi/shim.efi";
+	    } else {
+	    filename "pxelinux/pxelinux.0";
+	  }
+	}
 }
 ```
 - Установим и настроим TFTP сервер.
