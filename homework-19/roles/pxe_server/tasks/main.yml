@@ -1,85 +1,52 @@
 ---
 # tasks file
-- name: pxelinux tuning 1
-  file: path=/var/lib/tftpboot/pxelinux state=directory
+- name: Creates directory pxelinux
+  file:
+    path: /var/lib/tftpboot/pxelinux
+    state: directory
 
-- name: pxelinux tuning 2
-  shell: cp /tftpboot/pxelinux.0 /var/lib/tftpboot/pxelinux
+- name: Copy tftpboot files
+  shell: cp -a /tftpboot/. /var/lib/tftpboot/pxelinux
 
-- name: pxelinux tuning 3
-  shell: cp /tftpboot/libutil.c32 /var/lib/tftpboot/pxelinux
-
-- name: pxelinux tuning 4
-  shell: cp /tftpboot/menu.c32 /var/lib/tftpboot/pxelinux
-
-- name: pxelinux tuning 5
-  shell: cp /tftpboot/libmenu.c32 /var/lib/tftpboot/pxelinux
-
-- name: pxelinux tuning 6
-  shell: cp /tftpboot/ldlinux.c32 /var/lib/tftpboot/pxelinux
-
-- name: pxelinux tuning 7
-  shell: cp /tftpboot/vesamenu.c32 /var/lib/tftpboot/pxelinux
-
-- name: pxelinux tuning 8
-  file: path=/var/lib/tftpboot/pxelinux/pxelinux.cfg state=directory
+- name: Creates directory pxelinux.cfg
+  file:
+    path: /var/lib/tftpboot/pxelinux/pxelinux.cfg
+    state: directory
 
 - name: Make PXE menu
-  shell:
-    cmd: |
-      cat >/var/lib/tftpboot/pxelinux/pxelinux.cfg/default <<EOF
-      default menu
-      prompt 0
-      timeout 600
-      MENU TITLE Demo PXE setup
-      LABEL linux
-        menu label ^Install system
-        kernel images/CentOS-8.5/vmlinuz
-        append initrd=images/CentOS-8.5/initrd.img ip=enp0s3:dhcp inst.repo=http://10.0.0.20/centos8-install
-      LABEL linux-auto
-        menu label ^Auto install system
-        menu default
-        kernel images/CentOS-8.5/vmlinuz
-        append initrd=images/CentOS-8.5/initrd.img ip=enp0s3:dhcp inst.repo=http://10.0.0.20/centos8-install inst.ks=http://10.0.0.20/ks.cfg
-      LABEL vesa
-        menu label Install system with ^basic video driver
-        kernel images/CentOS-8.5/vmlinuz
-        append initrd=images/CentOS-8.5/initrd.img ip=dhcp inst.xdriver=vesa nomodeset
-      LABEL rescue
-        menu label ^Rescue installed system
-        kernel images/CentOS-8.5/vmlinuz
-        append initrd=images/CentOS-8.5/initrd.img rescue
-      LABEL local
-        menu label Boot from ^local drive
-        localboot 0xffff
-      EOF
-  
-- name: making dir pxelinux/images/CentOS-8.5
-  file: path=/var/lib/tftpboot/pxelinux/images/CentOS-8.5/ state=directory
+  template:
+    src: default.j2
+    dest: /var/lib/tftpboot/pxelinux/pxelinux.cfg/default
 
-- name: download initrd.img
+- name: Creates directory for images Centos
+  file:
+    path: /var/lib/tftpboot/pxelinux/images/CentOS/
+    state: directory
+
+- name: Download initrd.img
   shell: curl -O http://ftp.mgts.by/pub/CentOS/7/os/x86_64/images/pxeboot/initrd.img
 
-- name: download vmlinuz
+- name: Download vmlinuz
   shell: curl -O http://ftp.mgts.by/pub/CentOS/7/os/x86_64/images/pxeboot/vmlinuz
 
-- name: making menu dir/files 4
-  shell: cp {vmlinuz,initrd.img} /var/lib/tftpboot/pxelinux/images/CentOS-8.5/
+- name: Copy files vmlinuz,initrd.img
+  shell: cp {vmlinuz,initrd.img} /var/lib/tftpboot/pxelinux/images/CentOS/
 
-- name: cp {vmlinuz,initrd.img}
+- name: Download CentOS
   shell: curl -O http://ftp.mgts.by/pub/CentOS/7/isos/x86_64/CentOS-7-x86_64-Minimal-2009.iso
 
-- name: making dir /mnt/centos8-install
-  file: path=/mnt/centos8-install state=directory  
-    
-- name: mount CentOS-8.5.2111-x86_64-boot.iso
-  shell: mount -t iso9660 CentOS-7-x86_64-Minimal-2009.iso /mnt/centos8-install        
+- name: Creates directory /mnt/centos-install
+  file:
+    path: /mnt/centos-install
+    state: directory
+
+- name: mount CentOS.iso
+  shell: mount -t iso9660 CentOS-7-x86_64-Minimal-2009.iso /mnt/centos-install        
       
-- name: comm
-  shell: curl -O http://ftp.mgts.by/pub/CentOS/7/isos/x86_64/CentOS-7-x86_64-Minimal-2009.iso
-
-- name: comm
-  file: path=/mnt/centos8-autoinstall state=directory
+- name: Creates directory centos-autoinstall
+  file:
+    path: /mnt/centos-autoinstall
+    state: directory
 
 - name: Copy ks.cfg
   copy:
