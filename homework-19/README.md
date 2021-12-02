@@ -102,44 +102,8 @@ cp /путь/x86_64/os/images/pxeboot/{vmlinuz,initrd.img} /var/lib/tftpboot/pxe
 ```
 Для автоматической установки понадобиться kickstart файл, который представляет собой простой текстовый файл, 
 содержащий список параметров установки.
-```
-      ignoredisk --only-use=sda
-      autopart --type=lvm
-      # Partition clearing information
-      clearpart --all --initlabel --drives=sda
-      # Use graphical install
-      graphical
-      # Keyboard layouts
-      keyboard --vckeymap=us --xlayouts='us'
-      # System language
-      lang en_US.UTF-8
-      #repo
-      # Network information
-      network  --bootproto=dhcp --device=enp0s3 --ipv6=auto --activate
-      network  --bootproto=dhcp --device=enp0s8 --onboot=off --ipv6=auto --activate
-      network  --hostname=localhost.localdomain
-      # Root password
-      rootpw --iscrypted $6$g4WYvaAf1mNKnqjY$w2MtZxP/Yj6MYQOhPXS2rJlYT200DcBQC5KGWQ8gG32zASYYLUzoONIYVdRAr4tu/GbtB48.dkif.1f25pqeh.
-      # Run  the Setup Agent on first boot
-      firstboot --enable
-      # Do not configure the X Window System
-      skipx
-      # System services
-      services --enabled="chronyd"
-      # System timezone
-      timezone America/New_York --isUtc
-      user --groups=wheel --name=val --password=$6$ihX1bMEoO3TxaCiL$OBDSCuY.EpqPmkFmMPVvI3JZlCVRfC4Nw6oUoPG0RGuq2g5BjQBKNboPjM44.0lJGBc7OdWlL17B3qzgHX2v// --iscrypted --gecos="val"
-      %packages
-      @^minimal-environment
-      %end
-      %addon com_redhat_kdump --enable --reserve-mb='auto'
-      %end
-      %anaconda
-      pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty
-      pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
-      pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
-      %end
-```
 
 После этого сервер PXE будет готов к установке. 
 Запускаем `pxeclient` и проверяем.
+
+![Install](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-19/images/install.jpg)
