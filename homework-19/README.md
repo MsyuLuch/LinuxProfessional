@@ -12,7 +12,8 @@
 - В качестве шаблона воспользуйтесь репозиторием https://github.com/nixuser/virtlab/tree/main/centos_pxe.
 - Поменять установку из репозитория NFS на установку из репозитория HTTP.
 - Настроить автоматическую установку для созданного kickstart файла (*) Файл загружается по HTTP.
-- Формат сдачи ДЗ - vagrant + ansible
+
+Формат сдачи ДЗ - vagrant + ansible
 
 # **Исходные данные**
 
@@ -92,6 +93,8 @@ vesamenu.c32
           menu label Boot from ^local drive
           localboot 0xffff
 ```
+
+![Menu PXE](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-19/images/menu.jpg)
 
 Для загрузки программы установки используется параметр:
 ```
