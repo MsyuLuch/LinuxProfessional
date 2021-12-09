@@ -1,0 +1,24 @@
+- name: 'Disable default router for eth0'
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    regexp: '^DEFROUTE='
+    line: DEFROUTE="no"
+  notify: restart network
+
+- name: 'Install knock client'
+  yum:
+    name: 'http://li.nux.ro/download/nux/dextop/el7/x86_64/knock-0.7-2.el7.nux.x86_64.rpm'
+    state: present
+
+- name: Restart network
+  service:
+    name: network
+    state: restarted
+
+- name: Sleep
+  command: sleep 10
+        
+- name: Restart network
+  service:
+    name: network
+    state: restarted

@@ -1,0 +1,49 @@
+---
+- name: Install packages
+  yum:
+    name: "{{ packages }}"
+    state: present
+
+- name: Set sysctl params
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_file: /etc/sysctl.conf
+    ignoreerrors: yes
+    reload: yes
+  with_dict: "{{ sysctl_params }}"
+  when: '"Server" not in inventory_hostname'
+
+- name: Disable default route for eth0
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    line: DEFROUTE=no
+  #notify: reboot host
+  when: '"inetRouter1" not in inventory_hostname'
+
+- name: Copy hosts file
+  copy:
+    src: files/hosts
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: "0644"  
+
+- name: Import inetRouter1 tasks
+  import_tasks: inetRouter1.yml
+  when: 
+    - '"inetRouter1" in inventory_hostname'
+ #   - '"inetRouter2" not in inventory_hostname'
+
+- name: Import inetRouter2 tasks
+  import_tasks: inetRouter2.yml
+  when: '"inetRouter2" in inventory_hostname'
+
+- name: Import centralRouter tasks
+  import_tasks: centralRouter.yml
+  when: '"centralRouter" in inventory_hostname'
+
+- name: Import centralServer tasks
+  import_tasks: centralServer.yml
+  when: '"centralServer" in inventory_hostname'
