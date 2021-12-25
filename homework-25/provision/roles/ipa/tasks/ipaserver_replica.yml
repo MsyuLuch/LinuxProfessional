@@ -1,0 +1,52 @@
+---
+- name: Set FQDN
+  shell: hostnamectl set-hostname --static {{ ipa_server2_fqdn}} && hostnamectl set-hostname {{ ipa_server2_fqdn}}
+  become: true
+
+- name: Open Firewall for services
+  firewalld:
+    service={{ item }}
+    permanent=true
+    state=enabled
+    immediate=yes
+  with_items:
+    - http
+    - https
+    - dns
+    - ntp
+    - freeipa-ldap
+    - freeipa-ldaps    
+
+- name: Install ipa packages
+  yum: 
+   name: 
+    - ipa-server
+    - ipa-server-dns
+   state: present
+
+- name: Client join FreeIPA
+  command: 
+    cmd: >
+      ipa-client-install -U
+      --realm {{ ipa_realm }}
+      --domain {{ ipa_domain }} 
+      --server={{ ipa_server1_fqdn }} 
+      --ip-address={{ ipa_server1_ip }} 
+      --hostname={{ ipa_server2_fqdn }} 
+      --principal admin
+      --password {{ ipa_admin_password }}   
+      --mkhomedir
+      --force-ntpd   
+
+- name: Install ipa-replica
+  command: 
+    cmd: >
+      ipa-replica-install -U
+      --admin-password {{ ipa_admin_password }}
+      --mkhomedir
+      --ip-address {{ ipa_server2_ip }}
+      --setup-dns
+      --allow-zone-overlap
+      --skip-conncheck
+      --no-reverse     
+      --no-forwarders            

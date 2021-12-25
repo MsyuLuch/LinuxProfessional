@@ -1,0 +1,33 @@
+---
+- name: Install packages
+  yum:
+    name:
+      - epel-release
+    state: latest
+
+- name: Add FQDN entries to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+  loop:
+    - '{{ ipa_server1_ip }} {{ ipa_server1_fqdn }} {{ ipa_server1_fqdn }}'
+    - '{{ ipa_server2_ip }} {{ ipa_server2_fqdn }} {{ ipa_server2_fqdn }}'    
+    - '{{ ipa_client_ip }} {{ ipa_client_fqdn }} {{ ipa_client_fqdn }}'
+
+- name: Start and enable firewalld
+  service:
+    name: firewalld
+    state: restarted
+    enabled: true
+
+- name: Include server1 tasks
+  include_tasks: ipaserver_master.yml
+  when: '"server1" in inventory_hostname'
+
+- name: Include server2 tasks
+  include_tasks: ipaserver_replica.yml
+  when: '"server2" in inventory_hostname'
+
+- name: Include client tasks
+  include_tasks: ipa_client.yml
+  when: '"client" in inventory_hostname'

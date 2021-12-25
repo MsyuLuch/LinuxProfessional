@@ -1,0 +1,46 @@
+---
+- name: Set FQDN hostname
+  hostname: 
+    name: '{{ ipa_client_fqdn }}'
+
+- name: Install ipa packages
+  yum: 
+   name: 
+    - ipa-client
+    - freeipa-admintools
+    - bind-utils
+   state: present
+
+- name: Client join FreeIPA
+  command: 
+    cmd: >
+      ipa-client-install -U
+      --realm {{ ipa_realm }}
+      --domain {{ ipa_domain }} 
+      --server={{ ipa_server1_fqdn }} 
+      --ip-address={{ ipa_server1_ip }} 
+      --hostname={{ ipa_client_fqdn }} 
+      --principal admin
+      --password {{ ipa_admin_password }}   
+      --mkhomedir
+      --force-ntpd
+
+- name: Create test user .ssh dir
+  file: 
+   path: /home/test/.ssh
+   owner: test
+   group: test
+   state: directory
+   mode: "0700"
+  become: true
+  become_user: test
+
+- name: Copy test private and public key
+  copy:
+    src: "{{ item }}"
+    dest: /home/test/.ssh/
+    owner: test
+    group: test
+    mode: "0600"
+  with_fileglob:
+    - files/*     

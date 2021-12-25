@@ -1,0 +1,71 @@
+---
+- name: Set FQDN
+  shell: hostnamectl set-hostname --static {{ ipa_server1_fqdn}} && hostnamectl set-hostname {{ ipa_server1_fqdn}}
+  become: true
+
+- name: Install nss
+  yum: 
+   name:
+    - nss
+    - ipa-server
+    - ipa-server-dns
+    - bind-dyndb-ldap   
+   state: latest    
+
+- name: Open Firewall for services
+  firewalld:
+    service={{ item }}
+    permanent=true
+    state=enabled
+    immediate=yes
+  with_items:
+    - http
+    - https
+    - dns
+    - ntp
+    - freeipa-ldap
+    - freeipa-ldaps   
+
+
+- name: Install ipa server
+  command: 
+    cmd: >
+      ipa-server-install -U
+      --realm {{ ipa_realm }}
+      --domain {{ ipa_domain }}
+      --hostname {{ ipa_server1_fqdn }}
+      --ds-password {{ ipa_dm_password }}
+      --admin-password {{ ipa_admin_password }}
+      --ip-address {{ ipa_server1_ip }}
+      --setup-dns
+      --mkhomedir
+      --no-reverse     
+      --auto-forwarders
+
+- name: Kinit as admin
+  shell: echo {{ ipa_admin_password }} | kinit admin      
+
+- name: ipa user-add test
+  shell:
+    cmd: >
+      echo "test12345" | ipa user-add test --first=TEST --last=Test --email=test@test.ru --shell=/bin/bash --sshpubkey="{{ ipa_user_pub_key }}" --password      
+
+- name: Create test user .ssh dir
+  file: 
+   path: /home/test/.ssh
+   owner: test
+   group: test
+   state: directory
+   mode: "0700"
+  become: true
+  become_user: test
+
+- name: Copy test private and public key
+  copy:
+    src: "{{ item }}"
+    dest: /home/test/.ssh/
+    owner: test
+    group: test
+    mode: "0600"
+  with_fileglob:
+    - /files/*   

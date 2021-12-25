@@ -1,0 +1,11 @@
+ipa_server1_fqdn: server1.ipa.test
+ipa_server2_fqdn: server2.ipa.test
+ipa_client_fqdn: client.ipa.test
+ipa_server1_ip: 192.168.56.10
+ipa_server2_ip: 192.168.56.11
+ipa_client_ip: 192.168.56.15
+ipa_realm: IPA.TEST
+ipa_domain: ipa.test
+ipa_dm_password: "DMSecret456"
+ipa_admin_password: "Secret123"
+ipa_user_pub_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCw5NAT/08eLMyePATnRaZf/bBEaN+kxKAoQaj3yMc2hlGgiPo0LiXBXUInomzxSibzaLfAi5CkK3exZTkN1jh8AQ4WByIp2LmSnP+snR8GYxywA050kIwKGl1La1AS5Ww0jroxsLRwBvUGZZRuA74QVvTYO0HLltY8iSeFSmM9JFlGoJjPk1bcbuIvJxRT2uXF9+to1VUPp8fXmUAp10z+qLVsAwMbuDfi0hXz/WxaDm+0LaP3pXgJLCr0BmlOG8rahjo0XMyIrDc73CwEIXqD904IaGXxAAgEhnOIfL1rmwqWfRktMN1ycRe+u3stChY0tmEmPLWbAb+NKvg+aC27 test@client.ipa.test"
