@@ -6,7 +6,9 @@
  
 1. Установить FreeIPA;
 2. Написать Ansible playbook для конфигурации клиента;
+
 3*. Настроить аутентификацию по SSH-ключам;
+
 4**. Firewall должен быть включен на сервере и на клиенте.
 
 Формат сдачи ДЗ - vagrant + ansible
@@ -35,6 +37,7 @@ FreeIpa (Free Identity Policy Audit) - открытый проект компа�
 `Vagrantfile` разворачивает 3 виртуальных машины: ldap-master, ldap-replica и ldap-client.
 Для проверки можно получить информацию о пользователях LDAP на каждой из виртуальных машин (заведено 2 пользователя - admin, test):
 ```
+echo "Secret123" | kinit admin
 ipa user-find --all
 ```
 
@@ -52,7 +55,10 @@ hostname client.ipa.test
 
 Дополнительно пропишем в `/etc/hosts` соответствия между ip и именем хоста:
 ```
-
+[vagrant@client ~]$ cat /etc/hosts
+192.168.56.10 server1.ipa.test server1.ipa.test
+192.168.56.11 server2.ipa.test server2.ipa.test
+192.168.56.15 client.ipa.test client.ipa.test
 ```
 
 Необходимо открыть несколько портов, которые используются службами FreeIPA:
@@ -64,9 +70,13 @@ firewall-cmd --reload
 * где:
 
 53 — запросы DNS. Не обязателен, если мы не планируем использовать наш сервер в качестве сервера DNS
+
 80 и 443 — http и https для доступа к веб-интерфейсу управления
+
 88 и 464 — kerberos и kpasswd
+
 123 — синхронизация времени
+
 389 и 636 — ldap и ldaps соответственно
 
 Установка выполняется из репозитория `epel-release`, для CentOS 7 установим необходимые пакеты:
@@ -93,9 +103,6 @@ yum ipa-server-install
 ```
 Проверим, что система может выдать билет:
 ```
-[root@server1 vagrant]# kinit admin
-Password for admin@IPA.TEST:
-kinit: Password incorrect while getting initial credentials
 [root@server1 vagrant]# kinit admin
 Password for admin@IPA.TEST:
 [root@server1 vagrant]# klist
@@ -126,7 +133,7 @@ yum install ipa-client-install
       --principal admin // IPA admin
       --password "Secret123" // пароль IPA admin  
       --mkhomedir // включить опцию содания директорий пользователей
-      --force-ntpd  
+      --force-ntpd  // остановка служб синхронизации времени перед конфигурированием 
 ```
 
 Для репликации каталога выполним команду:
@@ -137,8 +144,8 @@ ipa-replica-install
       --mkhomedir // включить опцию содания директорий пользователей
       --ip-address 192.168.56.11
       --setup-dns  // сконфигурировать DNS BIND
-      --allow-zone-overlap
-      --skip-conncheck
+      --allow-zone-overlap // разрешить перекрытие зон
+      --skip-conncheck // пропустить результаты проверки соединения
       --no-reverse // не нестраивать обратную зону     
       --no-forwarders // не нестраивать перенаправление запросов
 ```
@@ -223,7 +230,16 @@ Valid starting     Expires            Service principal
 
 Попробуем зайти через ssh по паролю и по ключу, которые предварительно были загружены на клиента:
 ```
-[root@client vagrant]# ssh test@server1.ipa.test
+[vagrant@client ~]$ echo "Secret123" | kinit admin
+Password for admin@IPA.TEST: 
+[vagrant@client ~]$ klist
+Ticket cache: KEYRING:persistent:1000:1000
+Default principal: admin@IPA.TEST
+
+Valid starting     Expires            Service principal
+12/26/21 04:06:51  12/27/21 04:06:51  krbtgt/IPA.TEST@IPA.TEST
+
+[vagrant@client ~]$ ssh test@server1.ipa.test
 Password: 
 Password expired. Change your password now.
 Current Password: 
@@ -231,9 +247,16 @@ New password:
 Retype new password: 
 [test@server1 ~]$ hostname
 server1.ipa.test
+[test@server1 ~]$ exit
+logout
+Connection to server1.ipa.test closed.
 
-[test@client .ssh]$ ssh test@server1.ipa.test
-Last login: Sat Dec 25 01:55:04 2021 from 192.168.56.15
+[test@client ~]$ pwd
+/home/test
+[test@client ~]$ ssh test@server1.ipa.test
+Last login: Sun Dec 26 04:07:59 2021 from 192.168.56.15
+[test@server1 ~]$ hostanme
+-bash: hostanme: command not found
 [test@server1 ~]$ hostname
 server1.ipa.test
 ```
