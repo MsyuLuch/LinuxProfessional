@@ -10,7 +10,7 @@
 
 Результат ДЗ - рабочий скрипт который можно запустить
  
-# **Исходные данные**
+# **Исходные данные** 
 
 Ссылка на проект https://github.com/MsyuLuch/LinuxProfessional/tree/main/homework-9
 
