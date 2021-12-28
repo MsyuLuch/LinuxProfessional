@@ -4,7 +4,7 @@
 
 ## **Настраиваем split-dns**
  
-Цель:
+Цель: 
 
 Взять стенд https://github.com/erlong15/vagrant-bind
 
