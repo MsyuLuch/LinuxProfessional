@@ -4,7 +4,7 @@
 
 ## **Настройка PXE сервера для автоматической установки**
  
-Цель:
+Цель: 
 Отрабатываем навыки установки и настройки DHCP, TFTP, PXE загрузчика и автоматической загрузки
 
 - Следуя шагам из документа https://docs.centos.org/en-US/8-docs/advanced-install/assembly_preparing-for-a-network-install 
