@@ -8,7 +8,7 @@
 
 Vagrantfile с начальным  построением сети
 
-- inetRouter
+- inetRouter 
 - centralRouter
 - centralServer
 
