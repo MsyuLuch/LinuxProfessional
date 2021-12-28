@@ -20,7 +20,7 @@
  
 Результатом данной работы будет создание кастомного образа centos/7 с обновленным ядром и его публикация в Vagrant Cloud.
  
-# **Исходные данные**
+# **Исходные данные** 
 
 Ссылка на проект https://github.com/MsyuLuch/LinuxProfessional/tree/main/homework-1
 
