@@ -43,6 +43,10 @@ http://10.0.0.100:8082  NodeJS
 
 PHP-FPM будет слушать на localhost порт 9000:
 ```
+ server {
+ 
+        listen 8080 default_server;
+.....................
         location ~ \.php$ {
         fastcgi_pass 127.0.0.1:9000;
         fastcgi_index index.php;
@@ -52,6 +56,10 @@ PHP-FPM будет слушать на localhost порт 9000:
 ```
 DJANGO будет слушать сокет `uwsgi`:
 ```
+ server {
+ 
+        listen 8081 default_server;
+.....................
         location / {
             include uwsgi_params;
         uwsgi_pass unix:/run/uwsgi/firstsite.sock;
@@ -59,6 +67,10 @@ DJANGO будет слушать сокет `uwsgi`:
 ```
 NODEJS будет слушать на localhost порт 8000:
 ```
+ server {
+ 
+        listen 8082 default_server;
+.....................
         location / {
             proxy_pass http://localhost:8000;
         } 
