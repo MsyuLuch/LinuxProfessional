@@ -1,0 +1,14 @@
+    server {
+
+        listen {{ nodejs_listen_port  }} default_server;
+        listen [::]:{{ nodejs_listen_port }} default_server;
+
+        access_log /var/log/nginx/nodejs-access.log;
+        error_log /var/log/nginx/nodejs-error.log;
+
+        root /var/www/{{ nodejs_directory }};
+        
+        location / {
+        proxy_pass http://localhost:8000;
+  }     
+    }

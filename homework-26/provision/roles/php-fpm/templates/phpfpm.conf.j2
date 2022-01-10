@@ -1,0 +1,27 @@
+    server {
+
+        listen {{ phpfpm_listen_port  }} default_server;
+        listen [::]:{{ phpfpm_listen_port }} default_server;
+
+        server_name  _;
+        root {{ phpfpm_directory }}/;
+        index index.php index.html index.htm;
+
+        access_log /var/log/nginx/phpfpm-access.log;
+        error_log /var/log/nginx/phpfpm-error.log;
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+
+        location ~ \.php$ {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include /etc/nginx/fastcgi_params;
+        }        
+    }

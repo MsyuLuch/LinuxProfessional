@@ -1,0 +1,43 @@
+---
+- name: Install packages for php-fpm
+  yum:
+    name:
+      - php
+      - php-fpm 
+      - php-cli
+      - php-json
+      - php-pdo 
+      - php-mysql
+      - php-zip
+      - php-gd 
+      - php-mbstring
+      - php-curl
+      - php-xml
+      - php-pear
+      - php-bcmath
+    state: present 
+
+- name: Create PHP directory
+  file:
+    path: '{{ phpfpm_directory }}'
+    state: directory
+    mode: '0755'
+    owner: nginx
+    group: root
+
+- name: Copy index.php
+  copy:
+    src: '../files/index.php'
+    dest: '{{ phpfpm_directory }}/index.php'
+
+- name: Php-fpm restarted
+  systemd:
+    name: php-fpm
+    state: restarted
+    enabled: yes
+
+- name: Copy PHP-FPM NGINX conf
+  template:
+    src: phpfpm.conf.j2
+    dest: /etc/nginx/conf.d/phpfpm.conf
+  notify: Reload nginx    

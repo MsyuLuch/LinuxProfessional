@@ -1,0 +1,113 @@
+---
+- name: Install packages
+  yum:
+    name:
+    - gcc
+    state: present
+
+- name: Add repository repo.ius.io
+  yum:
+    name: https://repo.ius.io/ius-release-el7.rpm
+    state: present
+
+- name: Install Python from IUS
+  yum:
+    name: ['python36u', 'python36u-pip', 'python36u-devel']
+    state: present
+
+- name: Create symlink for Python 3
+  become: yes
+  file:
+    src: '/usr/bin/python3.6'
+    dest: '/usr/bin/python3'
+    state: link
+    owner: root
+    group: root
+    mode: 755
+    force: yes  
+
+- name: Create symlink for pip 3
+  become: yes
+  file:
+    src: '/usr/bin/pip3.6'
+    dest: '/usr/bin/pip3'
+    state: link
+    owner: root
+    group: root
+    mode: 755
+    force: yes  
+
+- name: Django-pip
+  shell: 
+    cmd: >
+      pip3 install Django==2.1.*  
+
+- name: Add django user
+  user:
+    name: django
+    group: nginx
+    shell: /bin/bash
+    home: '{{ django_directory }}'
+    system: yes
+
+- name: Django directory
+  file:
+    path: '{{ django_directory }}'
+    state: directory
+    mode: '0770'
+    owner: django
+    group: nginx
+
+- name: Django project
+  shell: 
+    cmd: >
+      cd ~ &&
+      /usr/local/bin/django-admin startproject firstsite
+  become_user: django
+
+- name: Allow connect to django
+  lineinfile:
+    path: '{{ django_directory }}/firstsite/firstsite/settings.py'
+    regexp: '^ALLOWED_HOSTS'
+    line: "ALLOWED_HOSTS = ['10.0.0.100']"
+  become_user: django
+
+- name: Uwsgi-pip
+  shell: 
+    cmd: >
+      pip3 install uwsgi 
+
+- name: Uwsgi directory
+  file:
+    path: /etc/uwsgi/sites
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Uwsgi config
+  copy: src=firstsite.ini dest=/etc/uwsgi/sites/firstsite.ini
+
+- name: Uwsgi systemd
+  copy: src=uwsgi.service dest=/etc/systemd/system/uwsgi.service
+
+- name: Uwsgi log directory
+  file:
+    path: '/var/log/uwsgi'
+    state: directory
+    mode: '0770'
+    owner: root
+    group: root  
+
+- name: Uwsgi restart
+  systemd:
+    name: uwsgi
+    state: restarted
+    daemon-reload: yes
+    enabled: yes
+
+- name: Copy Django NGINX conf
+  template:
+    src: django.conf.j2
+    dest: /etc/nginx/conf.d/django.conf
+  notify: Reload nginx  

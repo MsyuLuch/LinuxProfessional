@@ -1,0 +1,4 @@
+---
+# vars file for web-nginx
+phpfpm_listen_port: 8080
+phpfpm_directory: '/var/www/php'

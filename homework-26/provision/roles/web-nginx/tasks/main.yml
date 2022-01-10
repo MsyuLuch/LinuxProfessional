@@ -1,0 +1,23 @@
+---
+- name: Install epel-release
+  yum:
+    name:
+      - epel-release
+    state: latest
+
+- name: NGINX install
+  yum:
+    name: nginx
+    state: present  
+
+- name: NGINX restarted
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: yes
+
+- name: Put SELinux in permissive mode, logging actions that would be blocked
+  selinux:
+    policy: targeted
+    state: permissive    
+

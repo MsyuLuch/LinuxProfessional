@@ -1,0 +1,41 @@
+---
+- name: NodeJS repo
+  shell: curl -sL https://rpm.nodesource.com/setup_14.x | bash -
+
+- name: NodeJS install
+  yum:
+    name: nodejs
+    state: present
+
+- name: Create NodeJS directory
+  file:
+    path: '{{ nodejs_directory }}'
+    state: directory
+    mode: '0755'
+    owner: nginx
+    group: nginx
+
+- name: Copy hello.js
+  copy: 
+    src: ../files/hello.js 
+    dest: '{{ nodejs_directory }}/hello.js'
+
+- name: Set owner to directory
+  file:
+    path: '{{ nodejs_directory }}'
+    state: directory
+    recurse: yes
+    owner: nginx
+    group: nginx
+
+- name: Install PM2 and start hello.js
+  shell: |
+    cd '{{ nodejs_directory }}' &&
+    npm install pm2@latest -g &&
+    pm2 start hello.js
+
+- name: Copy NodeJS NGINX conf
+  template:
+    src: nodejs.conf.j2
+    dest: /etc/nginx/conf.d/nodejs.conf
+  notify: Reload nginx  

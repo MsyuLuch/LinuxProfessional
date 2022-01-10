@@ -1,0 +1,4 @@
+---
+# vars file for web-nginx
+nodejs_listen_port: 8082
+nodejs_directory: '/var/www/nodejs'

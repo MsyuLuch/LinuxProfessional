@@ -1,0 +1,17 @@
+    server {
+
+        listen {{ django_listen_port  }} default_server;
+        listen [::]:{{ django_listen_port }} default_server;
+
+        access_log /var/log/nginx/uwsgi-access.log;
+        error_log /var/log/nginx/uwsgi-error.log;
+
+        location = favicon.ico { access_log off; log_not_found off; }
+        location /static/ {
+            root {{ django_directory }}/firstsite;
+        }
+        location / {
+            include uwsgi_params;
+        uwsgi_pass unix:/run/uwsgi/firstsite.sock;
+        }       
+    }

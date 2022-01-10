@@ -1,0 +1,5 @@
+---
+# vars file for web-nginx
+django_listen_port: 8081
+django_directory: '/var/www/django'
+project_name: djangoproject  
