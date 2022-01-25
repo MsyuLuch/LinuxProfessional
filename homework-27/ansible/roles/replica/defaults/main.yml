@@ -1,0 +1,6 @@
+master_server_ip: 192.168.11.150
+replica_server_ip: 192.168.11.151
+
+mysql_root_password: 'Replication2022#'
+replication_user: replication_user
+replication_password: 'Replication2022#'

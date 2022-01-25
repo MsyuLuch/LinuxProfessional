@@ -1,0 +1,12 @@
+---
+- name: Master mysql server
+  hosts: master
+  become: true
+  roles:
+    - role: master
+
+- name: Replica mysql server
+  hosts: replica
+  become: true
+  roles:
+    - role: replica

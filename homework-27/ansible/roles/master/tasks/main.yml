@@ -1,0 +1,121 @@
+---
+- name: Add host to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+  loop:
+    - '{{ master_server_ip }} master'
+    - '{{ replica_server_ip }} replica'
+
+- name: Install mysql 5.7 repo
+  yum:
+    name: https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+    state: present
+
+- name: Import a key from a url
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+
+- name: Install mysql server 5.7
+  yum:
+    name: 
+      - mysql-community-server
+      - MySQL-python
+    state: present
+  notify: Restart mysql
+
+- name: Create directory for bin-logs
+  file:
+    path: /var/log/mysql/
+    owner: mysql
+    group: mysql
+    state: directory
+
+- name: Stop MySQL
+  service:
+    name: mysqld
+    state: stopped
+
+- name: Set skip-grant-tables
+  command: systemctl set-environment MYSQLD_OPTS="--skip-grant-tables"
+
+- name: Start MySQL
+  service:
+    name: mysqld
+    state: started
+
+- name: Update root password
+  command:  mysql -u root --execute="UPDATE mysql.user SET authentication_string = PASSWORD('{{ mysql_root_password }}') WHERE User = 'root' AND Host = 'localhost';"
+
+- name: Flush privileges
+  command:  mysql -u root --execute="FLUSH PRIVILEGES"
+
+- name: Stop MySQL
+  service:
+    name: mysqld
+    state: stopped
+
+- name: Unset skip-grant-tables
+  command: systemctl unset-environment MYSQLD_OPTS
+
+- name: Start MySQL
+  service:
+    name: mysqld
+    state: started
+    enabled: yes
+
+- name: Copy my.cnf
+  template:
+    src: root.my.cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Update root password
+  command: mysql --connect-expired-password --batch --execute="{{ item }}"
+  with_items:
+    - ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';
+
+- name: Stop MySQL
+  service:
+    name: mysqld
+    state: stopped
+
+- name: Copy config
+  copy:
+    src: files/master.my.cnf
+    dest: /etc/my.cnf
+  notify: Restart mysql
+
+- name: Start MySQL
+  service:
+    name: mysqld
+    state: started
+    enabled: yes  
+
+- name: Create user for replication
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ replication_user }}"
+    password: "{{ replication_password }}"
+    host: '192.168.11.151'
+    priv: '*.*:ALL'
+    state: present
+
+- name: Create database
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: bet
+    state: present
+
+- name: Import dump
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: bet
+    state: import
+    target: /vagrant/ansible/bet.dmp
