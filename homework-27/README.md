@@ -6,16 +6,9 @@
  
 Варианты стенда:
 
-В материалах приложены ссылки на 'Vagrantfile` (https://gitlab.com/otus_linux/stands-mysql/-/tree/master/) для репликации и дамп базы bet.dmp
-
-Базу развернуть на мастере и настроить так, чтобы реплицировались таблицы:
-| bookmaker          |
-| competition        |
-| market             |
-| odds               |
-| outcome
-
-Настроить GTID репликацию 
+В материалах приложены ссылки на Vagrantfile (https://gitlab.com/otus_linux/stands-mysql/-/tree/master/) для репликации и дамп базы bet.dmp.
+Базу развернуть на мастере и настроить так, чтобы реплицировались таблицы: bookmaker, competition, market, odds, outcome.
+Настроить GTID репликацию. 
 
 Формат сдачи ДЗ - vagrant + ansible
 
@@ -46,7 +39,7 @@ SHOW SLAVE STATUS\G;
 ![MASTER](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-27/images/master.png)
 ![REPLICA](https://github.com/MsyuLuch/LinuxProfessional/blob/main/homework-27/images/replica.png)
 
-***Установим MYSQL***
+***Установка MYSQL***
 
 По умолчанию репозитории CentOS 7 не содержат пакетов MySQL, поэтому мы установим MySQL из официального репозитория. Чтобы избежать каких-либо проблем, мы установим одну и ту же версию MySQL 5.7 на оба сервера.
 Установите MySQL на главный и подчиненный серверы:
