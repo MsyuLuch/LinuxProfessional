@@ -9,7 +9,7 @@
 
 - name: Install mysql 5.7 repo
   yum:
-    name: https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+    name: https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
     state: present
 
 - name: Import a key from a url
