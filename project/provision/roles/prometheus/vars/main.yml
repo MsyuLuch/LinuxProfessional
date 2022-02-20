@@ -1,3 +1,0 @@
----
-go_arch: "amd64"
-_prometheus_binary_install_dir: '/usr/local/bin'
