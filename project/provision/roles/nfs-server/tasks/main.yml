@@ -1,0 +1,42 @@
+---
+- name: firewalld-rules for nfs
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - nfs
+    - mountd
+    - rpc-bind
+
+- name: firewalld reload
+  shell: firewall-cmd --reload
+
+- name: install nfs-utils
+  yum:
+    name: nfs-utils
+    state: present
+
+- name: create dir nfs-share
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+  loop:
+    - "{{ share_directory_db }}"
+    - "{{ share_directory_web }}"    
+
+- name: Add exports param
+  lineinfile:
+    path: /etc/exports
+    line: '{{ item }} *(rw,sync,no_root_squash,no_subtree_check,anonuid=1000,anongid=1000)'
+  notify: restart nfs-server
+  loop:
+    - "{{ share_directory_db }}"
+    - "{{ share_directory_web }}"      
+
+- name: copy nfs-configs (nfs.conf)
+  copy: src=nfs.conf dest=/etc/nfs.conf
+  notify: restart nfs-server

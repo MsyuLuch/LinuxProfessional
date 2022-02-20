@@ -1,0 +1,23 @@
+#!/bin/bash
+echo "===================================================================================================="
+date
+NOW=$(date +"%Y-%m-%d-%H%M")
+FILE="{{ virtual_domain }}.$NOW.tar"
+BACKUP_DIR="{{ mount_directory }}"
+WWW_DIR="{{ wordpress_directory }}"
+
+WWW_TRANSFORM='s,^{{ wordpress_directory }},{{ virtual_domain }},'
+
+tar -cf $BACKUP_DIR/$FILE --absolute-names --transform $WWW_TRANSFORM $WWW_DIR > /dev/null
+
+if [[ $? -gt 0 ]];then
+echo "ERROR: Aborted. Copying the source code failed."
+echo "======================================================================================================"
+echo -en '\n'
+exit 1
+fi
+
+echo "Copy the source code successfull."
+echo "======================================================================================================"
+echo -en '\n'
+

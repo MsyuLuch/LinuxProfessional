@@ -1,0 +1,7 @@
+[project]
+proxy ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
+web ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
+nfs ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
+master ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
+replica ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
+monitoring ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key

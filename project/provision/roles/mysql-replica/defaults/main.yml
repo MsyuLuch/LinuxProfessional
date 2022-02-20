@@ -1,0 +1,7 @@
+---
+mysql_root_password: 'Replication2022#'
+replication_user: replication_user
+replication_password: 'Replication2022#'
+
+share_directory: "{{ nfs_server_ip }}:{{ share_directory_db }}"
+mount_directory: "/mnt/backups_database"

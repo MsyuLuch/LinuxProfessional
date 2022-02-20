@@ -1,0 +1,85 @@
+---
+
+- name: Installing Remi Repository
+  yum:
+    name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    state: present
+
+- name: To configure PHP 7.4 repository
+  command: yum-config-manager --enable remi-php74
+  become: yes     
+
+- name: Install HTTP Packages
+  yum:
+    name: 
+      - httpd
+      - mod_ssl      
+      - php
+      - php-cli
+      - php-json
+      - php-pdo 
+      - php-mysql
+      - php-zip
+      - php-gd 
+      - php-mbstring
+      - php-curl
+      - php-xml
+      - php-pear
+      - php-bcmath
+      - unzip       
+    state: present
+  notify: Restart httpd
+
+- name: Enable httpd
+  systemd:
+    name: httpd
+    state: restarted
+    enabled: yes
+
+- name: Copy httpd.conf
+  copy:
+    src: '../files/httpd.conf'
+    dest: '/etc/httpd/conf/httpd.conf'
+    owner: "root"
+    group: "root"
+    mode: '0644'     
+  notify: Restart httpd    
+
+- name: Copy ssl.conf
+  copy:
+    src: '../files/ssl.conf'
+    dest: '/etc/httpd/conf.d/ssl.conf'
+    owner: "root"
+    group: "root"
+    mode: '0644'  
+  notify: Restart httpd    
+
+- name: Set up Apache VirtualHost
+  template:
+    src: "virtual_host.conf.j2"
+    dest: "{{ wordpress_httpd_configuration }}"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  notify: Restart httpd
+
+- name: Create ssl directory
+  file:
+    path: "/etc/httpd/ssl"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0755'  
+
+- name: Copy ssl cert
+  copy:
+    src: '../files/{{ item }}'
+    dest: '/etc/httpd/ssl/{{ item }}'
+    owner: "root"
+    group: "root"
+    mode: '0644'  
+  notify: Restart httpd      
+  loop:
+    - 'localhost.key'
+    - 'localhost.crt'    
+    - 'ca.crt'    

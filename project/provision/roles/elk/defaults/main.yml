@@ -1,0 +1,3 @@
+---
+elasticsearch_version: '7.x'
+elasticsearch_start_timeout: 300

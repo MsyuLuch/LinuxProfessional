@@ -1,0 +1,3 @@
+---
+# vars file for web-nginx
+nginx_listen_port: 80

@@ -1,0 +1,81 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars.yml
+  roles:
+    - common
+
+- name: Install nfs server
+  hosts: nfs
+  become: true
+  vars_files:
+    - vars.yml  
+  roles:
+    - nfs-server
+    - node-exporter
+    - filebeat      
+    
+- name: Install MySQL Master server
+  hosts: master
+  become: true
+  vars_files:
+    - vars.yml  
+  roles:
+    - mysql-master  
+    - node-exporter      
+    - filebeat      
+
+- name: Install MySQL Master server
+  hosts: replica
+  become: true
+  vars_files:
+    - vars.yml  
+  roles:
+    - mysql-replica  
+    - node-exporter  
+    - filebeat      
+
+# hosts: master
+# become: true
+# vars_files:
+#   - vars.yml  
+# task:
+#   - name: Create database Wordpress
+#     command: mysql -u root -p'{{ mysql_root_password }}' -e "CREATE DATABASE {{ mysql_db }};"
+
+- name: Install proxy server
+  hosts: proxy
+  become: true
+  vars_files:
+    - vars.yml  
+  roles:
+    - web-nginx
+    - node-exporter  
+    - filebeat  
+
+- name: Install web server
+  hosts: web
+  become: true
+  vars_files:
+    - vars.yml  
+  roles:
+    - web-httpd
+    - node-exporter    
+    - filebeat      
+
+- name: Install monitoring server
+  hosts: monitoring
+  become: true
+  vars_files:
+    - vars.yml  
+  roles:
+    - monitoring       
+
+- name: Install elk server
+  hosts: elk
+  become: true
+  vars_files:
+    - vars.yml  
+  roles:
+    - elk       

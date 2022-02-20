@@ -1,0 +1,17 @@
+---
+- name: Restart httpd
+  systemd:
+    name: httpd
+    state: restarted
+    enabled: yes
+
+- name: Reload httpd
+  systemd:
+    name: httpd
+    state: reloaded
+
+- name: restart nfs-server
+  systemd:
+    name: nfs-server
+    state: restarted
+    enabled: yes    

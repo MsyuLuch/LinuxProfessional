@@ -1,0 +1,20 @@
+---
+
+#HTTP Settings
+http_host: "{{ virtual_domain }}"
+http_conf: "{{ virtual_domain }}.conf"
+http_port: "80"
+
+mysql_db_host: "{{ master_server_ip }}"
+
+wordpress_install_directory: "/var/www/{{ http_host }}"
+wordpress_directory: "/var/www/{{ http_host }}/wordpress"
+
+wordpress_httpd_configuration: '/etc/httpd/conf.d/{{ http_conf }}'
+wordpress_configuration: "{{ wordpress_directory }}/wp-config.php"
+
+wordpress_plugin_directory: "{{ wordpress_directory }}/wp-content/plugins"
+wordpress_theme_directory: "{{ wordpress_directory }}/wp-content/themes"
+
+share_directory: "{{ nfs_server_ip }}:{{ share_directory_web }}"
+mount_directory: "/mnt/backups_web"

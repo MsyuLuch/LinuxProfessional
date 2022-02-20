@@ -1,0 +1,66 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+      - /var/log/httpd/*_access.log
+  fields:
+    type: httpd_access
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/httpd/*_error.log
+  fields:
+    type: httpd_error
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/nginx/*_access.log
+  fields:
+    type: nginx_access
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/nginx/*_error.log
+  fields:
+    type: nginx_error
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/messages
+  fields:
+    type: syslog
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/audit/audit.log
+  fields:
+    type: audit
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/mysqld.log
+  fields:
+    type: mysql
+  fields_under_root: true
+  scan_frequency: 5s
+
+output.logstash:
+  hosts: ["{{ elk_server_ip }}:5044"]

@@ -1,0 +1,13 @@
+<VirtualHost *:80 *:443>
+   ServerAdmin webmaster@localhost
+   ServerName {{ http_host }}
+   DocumentRoot {{ wordpress_directory }}
+   ErrorLog /var/log/httpd/{{ http_host }}_error.log
+   CustomLog /var/log/httpd/{{ http_host }}_access.log combined
+
+   <Directory {{ wordpress_directory }}>
+     Options Indexes FollowSymLinks
+     AllowOverride all
+     Require all granted
+   </Directory>
+</VirtualHost>

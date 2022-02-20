@@ -1,0 +1,19 @@
+---
+proxy_server_ip: 192.168.3.201
+web_server_ip: 192.168.3.202
+master_server_ip: 192.168.3.203
+replica_server_ip: 192.168.3.204
+nfs_server_ip: 192.168.3.205
+monitoring_server_ip: 192.168.3.206
+elk_server_ip: 192.168.3.207
+
+virtual_domain: web.myproject.com
+
+share_directory_web: /srv/backups/web
+share_directory_db: /srv/backups/database
+
+mysql_db: 'wordpress'
+mysql_user: 'wordpress'
+mysql_password: 'WordPress2022#'
+
+

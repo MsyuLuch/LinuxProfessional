@@ -1,0 +1,7 @@
+[mysqld]
+bind-address = {{ replica_server_ip }}
+
+gtid_mode = ON
+enforce-gtid-consistency = ON
+
+server-id = 2

@@ -1,0 +1,156 @@
+---
+- name: Open Firewall for services
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - mysql
+    - nfs
+    - mountd
+    - rpc-bind    
+
+- name: firewalld reload
+  shell: firewall-cmd --reload
+
+- name: setsebool mysql_connect_any
+  shell: setsebool -P mysql_connect_any=ON  
+
+- name: Install packages
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - nfs-utils  
+
+- name: Enable nfs
+  systemd:
+    name: httpd
+    state: restarted
+    enabled: yes   
+
+- name: Install mysql repo
+  yum:
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm
+    state: present
+
+- name: Import a key from a url
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+
+
+- name: Install mysql server 
+  yum:
+    name: 
+      - mysql-community-server
+      - MySQL-python          
+    state: present
+  notify: Restart mysql
+
+- name: Create directory for logs
+  file:
+    path: /var/log/mysql/
+    owner: mysql
+    group: mysql
+    state: directory
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Grep mysql temp root passwd
+  shell: "grep 'temporary password' /var/log/mysqld.log | awk -F ' ' '{print $(NF)}'"
+  register: temp_root_passwd
+
+- name: Reset root paswd
+  shell: mysql --user root --password='{{ temp_root_passwd.stdout }}' --connect-expired-password --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '{{ mysql_root_password }}';"
+
+- name: Copy my.cnf
+  template:
+    src: root.my.cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Copy config
+  template:
+    src: replica.my.cnf.j2
+    dest: /etc/my.cnf.d/my.cnf
+    owner: root
+    group: root
+    mode: 0600  
+  notify: Restart mysql  
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Set param
+  shell: mysql -u root -p'{{ mysql_root_password }}' -e '{{ item }}'
+  loop:
+    - SET @@GLOBAL.ENFORCE_GTID_CONSISTENCY = WARN;
+    - SET @@GLOBAL.ENFORCE_GTID_CONSISTENCY = ON;
+    - SET @@GLOBAL.GTID_MODE = OFF_PERMISSIVE;
+    - SET @@GLOBAL.GTID_MODE = ON_PERMISSIVE;
+    - SET @@GLOBAL.GTID_MODE = ON;
+    - SET GLOBAL server_id=2;
+
+- name: Change to slave
+  shell: mysql -u root -p'{{ mysql_root_password }}' -e 'CHANGE MASTER TO MASTER_HOST="{{ master_server_ip }}", MASTER_USER="{{ replication_user }}", MASTER_PASSWORD="{{ replication_password }}", MASTER_AUTO_POSITION=1, GET_MASTER_PUBLIC_KEY = 1;'
+  
+- name: Start slave
+  shell: mysql -u root -p'{{ mysql_root_password }}' -e 'START SLAVE;'
+
+- name: Create BackupDirectory
+  file:
+    path: "{{ mount_directory }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0755'  
+
+- name: mount backup directory
+  shell: mount {{ share_directory }} {{ mount_directory }}
+
+- name: Add exports param
+  lineinfile:
+    path: /etc/fstab
+    line: '{{ share_directory }} {{ mount_directory }} nfs defaults 0 0'  
+
+- name: Copy backup scripts
+  template:
+    src: "backup.sh.j2"
+    dest: "/opt/backup.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g=r,o=r
+
+- name: Create log directory
+  file:
+    path: "/var/log/my-app/"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0755'
+
+- name: Create Backup log file
+  file:
+    path: "/var/log/my-app/backup.log"
+    state: touch    
+    owner: "root"
+    group: "root"
+    mode: '0644'    
+
+- name: Add backup task in cron
+  lineinfile:
+    path: /etc/crontab
+    line: '*/20  *  *  *  *  root  /opt/backup.sh >> /var/log/my-app/backup.log 2>&1'  
+
+- name: Conf logrotate backup log
+  template:
+    src: "my-app.j2"
+    dest: "/etc/logrotate.d/my-app"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r    

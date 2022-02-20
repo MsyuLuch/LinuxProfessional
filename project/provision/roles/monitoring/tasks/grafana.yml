@@ -1,0 +1,42 @@
+---
+- name: Open Firewall for services
+  block:
+    - name: Allow Ports
+      firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: enabled
+      loop: [ '3000/tcp']
+
+- name: firewalld reload
+  shell: firewall-cmd --reload
+
+# - name: Allow ports in SELinux
+#   seport:
+#     ports: "{{ item }}"
+#     proto: tcp
+#     setype: http_port_t
+#     state: present   
+#   loop: [ '3000']  
+
+- name: Add Repository
+  yum_repository:
+    name: Grafana
+    description: Grafana YUM repo
+    baseurl: https://packages.grafana.com/oss/rpm
+    gpgkey: https://packages.grafana.com/gpg.key
+    gpgcheck: yes
+    sslverify: yes
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+
+- name: Install Grafana
+  yum:
+    name: grafana
+    state: latest
+
+- name: Enable and (re)start service
+  service:
+    name: grafana-server
+    enabled: yes
+    state: restarted
+    use: systemd

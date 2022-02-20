@@ -1,0 +1,92 @@
+---
+- name: Open Firewall for services
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - http
+    - https
+    - nfs
+    - mountd
+    - rpc-bind
+
+- name: firewalld reload
+  shell: firewall-cmd --reload
+
+- name: setsebool httpd_can_network_connect_db
+  shell: setsebool -P httpd_can_network_connect_db 1 
+
+- name: Install packages
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - nfs-utils
+
+- name: Enable nfs
+  systemd:
+    name: httpd
+    state: restarted
+    enabled: yes      
+
+- name: Install Apache
+  include_tasks: httpd.yml
+
+- name: Install WordPress
+  include_tasks: wordpress.yml
+
+- name: Create BackupDirectory
+  file:
+    path: "{{ mount_directory }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0755'  
+
+- name: mount backup directory
+  shell: mount {{ share_directory }} {{ mount_directory }}
+
+- name: Add exports param
+  lineinfile:
+    path: /etc/fstab
+    line: '{{ share_directory }} {{ mount_directory }} nfs defaults 0 0'
+
+- name: Copy backup scripts
+  template:
+    src: "backup.sh.j2"
+    dest: "/opt/backup.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g=r,o=r
+
+- name: Create log directory
+  file:
+    path: "/var/log/my-app/"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0755'
+
+- name: Create Backup log file
+  file:
+    path: "/var/log/my-app/backup.log"
+    state: touch    
+    owner: "root"
+    group: "root"
+    mode: '0644'    
+
+- name: Add backup task in cron
+  lineinfile:
+    path: /etc/crontab
+    line: '*/20  *  *  *  *  root  /opt/backup.sh >> /var/log/my-app/backup.log 2>&1'  
+
+- name: Conf logrotate backup log
+  template:
+    src: "my-app.j2"
+    dest: "/etc/logrotate.d/my-app"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  

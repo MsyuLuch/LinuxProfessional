@@ -1,0 +1,12 @@
+---
+node_exporter_version: 1.2.2
+node_exporter_binary_local_dir: ""
+node_exporter_web_listen_address: "0.0.0.0:9100"
+node_exporter_web_telemetry_path: "/metrics"
+
+node_exporter_textfile_dir: "/var/lib/node_exporter"
+
+# Internal variables.
+_node_exporter_binary_install_dir: "/usr/local/bin"
+_node_exporter_system_group: "node-exp"
+_node_exporter_system_user: "{{ _node_exporter_system_group }}"

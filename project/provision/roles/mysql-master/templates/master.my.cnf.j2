@@ -1,0 +1,12 @@
+[mysqld]
+bind-address = {{ master_server_ip }}
+
+gtid_mode = ON
+enforce-gtid-consistency = ON
+
+server-id = 1
+
+log_bin = mysql-bin
+log-error=/var/log/mysqld.log
+
+replicate-do-db=wordpress
