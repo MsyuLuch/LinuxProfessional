@@ -34,6 +34,8 @@
 
 В качестве web-проекта выбран Wordpress — свободно распространяемая система управления содержимым сайта с открытым исходным кодом; написана на PHP; сервер базы данных — MySQL.
 
+<details><summary>**Настройка SELinux и Firewalld**</summary>
+
 Команды для проверки работы SELinux:
 ```
 Посмотреть состояние работы SELinux (развернуто):
@@ -41,6 +43,12 @@
 
 Посмотреть кратко — работает или нет:
 # getenforce
+```
+
+На веб-сервере разрешаем подключение к базе данных MySQL
+```
+- name: setsebool httpd_can_network_connect_db
+  shell: setsebool -P httpd_can_network_connect_db 1 
 ```
 
 Общие команды для управления firewalld:
@@ -55,6 +63,68 @@ firewall-cmd --reload
 Посмотреть созданные правила:
 firewall-cmd --list-all
 ```
+
+На каждой машине, в соответствии с её функциональностью перед началом установки необходимых пакетов, открываем порты или разрешаем работу соответствующих сервисов:
+```
+- name: Open Firewall for services (MySQL, NFS)
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - mysql
+    - nfs
+    - mountd
+    - rpc-bind  
+```
+```
+- name: Open Firewall ports (Prometheus)
+  block:
+    - name: Allow Ports
+      firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: enabled
+      loop: [ '9090/tcp', '9093/tcp', '9094/tcp', '9100/tcp', '9094/udp' ]
+```
+
+</details>
+
+<details><summary>**Установка и настройка MySQL**</summary>
+
+Развернем два сервера баз данных: primary и secondary. Настроим между ними репликацию.
+Подключаем репозиторий `https://repo.mysql.com/` и устанавливаем MySQL 8.0
+
+Чтобы настроить репликацию меняем id сервера и включаем режим `gtid_mode = ON` (глобальные идентификаторы транзакции).
+Конфигурационные файлы обоих серверов соответственно:
+primary
+```
+[mysqld]
+bind-address = {{ master_server_ip }}
+
+gtid_mode = ON
+enforce-gtid-consistency = ON
+
+server-id = 1
+
+log_bin = mysql-bin
+log-error=/var/log/mysqld.log
+
+replicate-do-db=wordpress
+```
+
+secondary
+```
+[mysqld]
+bind-address = {{ replica_server_ip }}
+
+gtid_mode = ON
+enforce-gtid-consistency = ON
+
+server-id = 2
+```
+
+</details>
 
 <details><summary>**Установка Wordpress**</summary>
 
@@ -96,6 +166,8 @@ server {
 }    
 ``` 
 
+### ***Настройка Apache***
+
 Настроим виртуальный хост Apache на работу по протоколу https:
 ```
 <VirtualHost *:80 *:443>
@@ -112,5 +184,22 @@ server {
    </Directory>
 </VirtualHost>
 ```
+
+### ***Настройка Wordpress***
+Скачиваем с официального сайта wordpress последнюю версию проекта, разархивируем файлы в рабочую директорию.
+До начала работы проекта, необходимо создать базу данных `Wordpress`.
+
+В конфигурационный файл wordpress `wp-config.php` добавим строки, определяющие работу по https протоколу:
+```
+if($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'){
+
+    $_SERVER['HTTPS'] = 'on';
+        $_SERVER['SERVER_PORT'] = 443;
+        }
+
+define('WP_HOME','https://{{ virtual_domain }}/');
+define('WP_SITEURL','https://{{ virtual_domain }}/');
+``` 
+
 </details>
 

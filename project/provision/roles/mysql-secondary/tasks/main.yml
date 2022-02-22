@@ -40,8 +40,7 @@
     state: present
     key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
 
-
-- name: Install mysql server 
+- name: Install mysql server
   yum:
     name: 
       - mysql-community-server
