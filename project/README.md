@@ -34,7 +34,7 @@
 
 В качестве web-проекта выбран Wordpress — свободно распространяемая система управления содержимым сайта с открытым исходным кодом; написана на PHP; сервер базы данных — MySQL.
 
-<details><summary>**Настройка SELinux и Firewalld**</summary>
+<details><summary>Настройка SELinux и Firewalld</summary>
 
 ***Дополнительные настройки для работы SELinux***
 
@@ -123,7 +123,7 @@ firewall-cmd --list-all
 ```
 </details>
 
-<details><summary>**Установка и настройка MySQL**</summary>
+<details><summary>Установка и настройка MySQL</summary>
 
 Развернем два сервера баз данных: primary и secondary. Настроим между ними репликацию.
 Подключаем репозиторий `https://repo.mysql.com/` и устанавливаем MySQL 8.0
@@ -159,7 +159,7 @@ server-id = 2
 
 </details>
 
-<details><summary>**Установка Wordpress**</summary>
+<details><summary>Установка Wordpress</summary>
 
 ### ***Настройка Proxy***
 
@@ -236,7 +236,7 @@ define('WP_SITEURL','https://{{ virtual_domain }}/');
 
 </details>
 
-<details><summary>**Установка и настройка NFS**</summary>
+<details><summary>Установка и настройка NFS</summary>
 
 Для хранения резервных копий с сервера баз данных и веб сервера будем использовать NFS сервер.
 
@@ -332,11 +332,11 @@ echo -en '\n'
 </details>
 
 
-<details><summary>**Установка и настройка мониторинга**</summary>
+<details><summary>Установка и настройка мониторинга</summary>
 
 </details>
 
 
-<details><summary>**Установка и настройка логирования**</summary>
+<details><summary>Установка и настройка логирования</summary>
 
 </details>
