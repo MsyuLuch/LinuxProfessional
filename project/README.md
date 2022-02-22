@@ -36,6 +36,8 @@
 
 <details><summary>**Настройка SELinux и Firewalld**</summary>
 
+***Дополнительные настройки для работы SELinux***
+
 Команды для проверки работы SELinux:
 ```
 Посмотреть состояние работы SELinux (развернуто):
@@ -44,13 +46,14 @@
 Посмотреть кратко — работает или нет:
 # getenforce
 ```
-***Дополнительные настройки для работы SELinux***
 
-На веб-сервере разрешаем подключение к базе данных MySQL
+На веб-сервере разрешаем подключение к базе данных MySQL:
 ```
 - name: setsebool httpd_can_network_connect_db
   shell: setsebool -P httpd_can_network_connect_db 1 
 ```
+
+***Дополнительные настройки для работы Firewalld***
 
 Общие команды для управления firewalld:
 ```
@@ -66,6 +69,16 @@ firewall-cmd --list-all
 ```
 
 На каждой машине, в соответствии с её функциональностью перед началом установки необходимых пакетов, открываем порты или разрешаем работу соответствующих сервисов:
+```
+- name: Open Firewall for services (WEB)
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - http
+    - https
+```
 ```
 - name: Open Firewall for services (MySQL, NFS)
   firewalld:
@@ -87,6 +100,26 @@ firewall-cmd --list-all
         permanent: true
         state: enabled
       loop: [ '9090/tcp', '9093/tcp', '9094/tcp', '9100/tcp', '9094/udp' ]
+```
+```
+- name: Open Firewall ports (Elastic)
+  block:
+    - name: Allow Ports
+      firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: enabled
+      loop: [ '9200/tcp','9300/tcp']
+```
+```
+- name: Open Firewall ports (Kibana)
+  block:
+    - name: Allow Ports
+      firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: enabled
+      loop: [ '5601/tcp']
 ```
 </details>
 
@@ -203,3 +236,107 @@ define('WP_SITEURL','https://{{ virtual_domain }}/');
 
 </details>
 
+<details><summary>**Установка и настройка NFS**</summary>
+
+Для хранения резервных копий с сервера баз данных и веб сервера будем использовать NFS сервер.
+
+Установим NFS сервер:
+```
+# устанавливаем NFS сервер
+yum install nfs-utils -y
+```
+Создаем на сервере две директории, где будем хранить резервные копии веб-сайта и базы данных.
+Редактируем конфигурационный файл `/etc/exports`, разрешая монтировать директории:
+```
+- name: Add exports param
+  lineinfile:
+    path: /etc/exports
+    line: '{{ item }} *(rw,sync,no_root_squash,no_subtree_check,anonuid=1000,anongid=1000)'
+  notify: restart nfs-server
+  loop:
+    - "{{ share_directory_db }}"
+    - "{{ share_directory_web }}"
+```  
+
+Скрипты резервного копирования будут запускаться по cron и записывать результаты выполнения команды в log файл (дополнительно настраиваем logrotate):
+```
+- name: Add backup task in cron
+  lineinfile:
+    path: /etc/crontab
+    line: '*/20  *  *  *  *  root  /opt/backup.sh >> /var/log/my-app/backup.log 2>&1'  
+```
+
+Копии базы данных будем снимать с secondary сервера. 
+Mysqldump будем выполнять со следующими параметрами:
+```
+- single-transaction 
+- lock-tables 
+- routines
+```
+
+Скрипт для создания резервных копий базы данных:
+```
+#!/bin/bash
+echo "===================================================================================================="
+date
+NOW=$(date +"%Y-%m-%d-%H%M")
+BACKUP_DIR="{{ mount_directory }}"
+
+DB_USER="root"
+DB_PASS="{{ mysql_root_password }}"
+DB_NAME="{{ mysql_db }}"
+DB_FILE="{{ virtual_domain }}.$NOW.sql"
+
+mysqldump -u$DB_USER -p$DB_PASS --single-transaction --lock-tables --routines --databases $DB_NAME | gzip > $BACKUP_DIR/$DB_FILE.gz
+
+if [[ $? -gt 0 ]];then
+echo "ERROR: Aborted. Copying the database failed."
+echo "======================================================================================================"
+echo -en '\n'
+exit 1
+fi
+
+echo "Copy the database successfull."
+echo "======================================================================================================"
+echo -en '\n'
+```
+
+Копии frontend`а сайта снимаем с веб-сервера.
+Создаем архив папки, дополнительно изменяя вложенность папок в архиве (специфика выполнения команды tar)
+Скрипт backup:
+```
+#!/bin/bash
+echo "===================================================================================================="
+date
+NOW=$(date +"%Y-%m-%d-%H%M")
+FILE="{{ virtual_domain }}.$NOW.tar"
+BACKUP_DIR="{{ mount_directory }}"
+WWW_DIR="{{ wordpress_directory }}"
+
+WWW_TRANSFORM='s,^{{ wordpress_directory }},{{ virtual_domain }},'
+
+tar -cf $BACKUP_DIR/$FILE --absolute-names --transform $WWW_TRANSFORM $WWW_DIR > /dev/null
+
+if [[ $? -gt 0 ]];then
+echo "ERROR: Aborted. Copying the source code failed."
+echo "======================================================================================================"
+echo -en '\n'
+exit 1
+fi
+
+echo "Copy the source code successfull."
+echo "======================================================================================================"
+echo -en '\n'
+```
+
+</details>
+
+
+<details><summary>**Установка и настройка мониторинга**</summary>
+
+</details>
+
+
+<details><summary>**Установка и настройка логирования**</summary>
+
+</details>
