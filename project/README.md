@@ -87,7 +87,6 @@ firewall-cmd --list-all
         state: enabled
       loop: [ '9090/tcp', '9093/tcp', '9094/tcp', '9100/tcp', '9094/udp' ]
 ```
-
 </details>
 
 <details><summary>**Установка и настройка MySQL**</summary>
