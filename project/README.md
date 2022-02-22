@@ -20,7 +20,7 @@
 
 # **Описание процесса выполнения**
 
-![schema](https://github.com/MsyuLuch/LinuxProfessional/tree/main/project/image/schema.jpg)
+![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema.jpg)
 
 Проект состоит из 6 виртуальных машин:
 - proxy
