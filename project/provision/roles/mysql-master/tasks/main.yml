@@ -169,9 +169,9 @@
     - name: Create database Wordpress
       command: mysql -u root -p'{{ mysql_root_password }}' -e "CREATE DATABASE {{ mysql_db }};"
 
- - name: Restore database dump
-   command: mysql -u root -p'{{ mysql_root_password }}' {{ mysql_db }} < "{{ mount_directory_db }}/{{ backup_db_name }}"
-   when: backup_flag == true
+# - name: Restore database dump
+#   command: mysql -u root -p'{{ mysql_root_password }}' {{ mysql_db }} < "{{ mount_directory_db }}/{{ backup_db_name }}"
+#   when: backup_flag == true
 
 - name: Set param
   shell: mysql -u root -p'{{ mysql_root_password }}' -e '{{ item }}'
