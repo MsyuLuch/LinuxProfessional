@@ -1192,11 +1192,15 @@ sysctl -w net.ipv4.tcp_wmem="4096 65536 16777216"
 </details>
 
 <details><summary>Планы на доработку</summary>
+
 Планы:
+
 - добавить отправку alert сообщений в мессанджеры и на электронную почту
 - повысить отказоустойчивость проекта, добавив еще один web-сервер
 - добавить dns сервера
 - настроить проксирование запросов к grafana, kibana через прокси сервер
 - изменить конфигурацию сети, согласно следующей схеме
+
 ![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema1.jpg)
+
 </details>
