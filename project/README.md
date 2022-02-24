@@ -25,7 +25,7 @@ Vagrant 2.2.19
 
 # **Описание процесса выполнения**
 
-![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema3.jpg)
+![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema31.jpg)
 
 Проект включает следующие виртуальные машины:
 - proxy
