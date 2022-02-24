@@ -8,9 +8,6 @@
         state: enabled
       loop: [ '9115/tcp' ]
 
-- name: Firewalld reload
-  shell: firewall-cmd --reload
-
 - name: Create blackbox_exporter system group
   group:
     name: blackbox-exp

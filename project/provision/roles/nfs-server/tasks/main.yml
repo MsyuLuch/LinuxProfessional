@@ -9,9 +9,6 @@
     - mountd
     - rpc-bind
 
-- name: Firewalld reload
-  shell: firewall-cmd --reload
-
 - name: install nfs-utils
   yum:
     name: nfs-utils

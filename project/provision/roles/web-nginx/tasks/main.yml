@@ -15,9 +15,6 @@
     - http
     - https
 
-- name: Firewalld reload
-  shell: firewall-cmd --reload
-
 - name: Install nginx
   yum:
     name: nginx

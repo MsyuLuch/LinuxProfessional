@@ -18,6 +18,11 @@
 - `readme.md` - описание процесса выполнения домашнего задания
 - `Vagrantfile` - файл описывающий виртуальную инфраструктуру для `Vagrant`
 
+Версии ПО:
+ansible 2.9.6
+python version = 3.8.10
+Vagrant 2.2.19
+
 # **Описание процесса выполнения**
 
 ![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema3.jpg)
@@ -426,6 +431,8 @@ Prometheus — это база данных временных рядов. На�
 192.168.3.206:9090
 ```
 
+![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/prometheus.jpg)
+
 В качестве экспортера выбран Node exporter, который установлен на каждом из узлов, которые необходимо мониторить. Prometheus забирает метрики у Node exporter на порту 9100.
 Посмотреть метрики в текстовом виде можно:
 ```
@@ -450,6 +457,8 @@ Grafana - это платформа с открытым исходным код�
 # Grafana
 192.168.3.206:3000
 ```
+
+![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/grafana.jpg) 
  
 </details>
 
@@ -562,7 +571,9 @@ filter {
 ```
 192.168.3.207:5601
 ```
+![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/kibana.jpg)
 
+![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/kibana_responcecode.jpg)
 </details>
 
 <details><summary>Sysctl настройки параметров узлов сети</summary>
@@ -1178,4 +1189,14 @@ cat /proc/sys/net/ipv4/tcp_wmem
 sysctl -w net.ipv4.tcp_wmem="4096 65536 16777216"
 ```
 
+</details>
+
+<details><summary></summary>
+Планы:
+- добавить отправку alert сообщений в мессанджеры и на электронную почту
+- повысить отказоустойчивость проекта, добавив еще один web-сервер
+- добавить dns сервера
+- настроить проксирование запросов к grafana, kibana через прокси сервер
+- изменить конфигурацию сети, согласно следующей схеме
+![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema1.jpg)
 </details>

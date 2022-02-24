@@ -8,9 +8,6 @@
         state: enabled
       loop: [ '9100/tcp']    
 
-- name: Firewalld reload
-  shell: firewall-cmd --reload      
-
 # - name: Allow node_exporter port in SELinux on RedHat OS family
 #   seport:
 #     ports: 9100

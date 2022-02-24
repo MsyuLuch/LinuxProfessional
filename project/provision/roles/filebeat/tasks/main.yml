@@ -8,9 +8,6 @@
         state: enabled
       loop: [ '9100/tcp']    
 
-- name: Firewalld reload
-  shell: firewall-cmd --reload      
-
 - name: Install the public signing key
   rpm_key: 
     key: https://artifacts.elastic.co/GPG-KEY-elasticsearch

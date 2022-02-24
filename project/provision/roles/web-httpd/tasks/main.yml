@@ -11,9 +11,6 @@
     - mountd
     - rpc-bind
 
-- name: Firewalld reload
-  shell: firewall-cmd --reload
-
 - name: setsebool httpd_can_network_connect_db
   shell: setsebool -P httpd_can_network_connect_db 1 
 

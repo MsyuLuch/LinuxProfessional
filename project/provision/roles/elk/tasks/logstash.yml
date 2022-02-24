@@ -8,9 +8,6 @@
         state: enabled
       loop: [ '5044/tcp']
 
-- name: Firewalld reload
-  shell: firewall-cmd --reload
-
 - name: Install logstash
   yum: 
     name: logstash

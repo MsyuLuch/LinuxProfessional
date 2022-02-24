@@ -8,9 +8,6 @@
         state: enabled
       loop: [ '9090/tcp', '9093/tcp', '9094/tcp', '9100/tcp', '9094/udp' ]
 
-- name: Firewalld reload
-  shell: firewall-cmd --reload
-
 # - name: Allow ports in SELinux
 #   seport:
 #     ports: "{{ item }}"

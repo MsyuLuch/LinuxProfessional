@@ -10,9 +10,6 @@
     - mountd
     - rpc-bind    
 
-- name: Firewalld reload
-  shell: firewall-cmd --reload
-
 - name: Setsebool mysql_connect_any
   shell: setsebool -P mysql_connect_any=ON  
 
