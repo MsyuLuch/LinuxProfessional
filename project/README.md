@@ -141,7 +141,26 @@ firewall-cmd --list-all
 
 Развернем два сервера баз данных: master и replica. Настроим между ними репликацию, в режиме Primary - Secondary.
 
-Подключаем репозиторий `https://repo.mysql.com/` и устанавливаем MySQL 8.0
+Подключаем репозиторий `https://repo.mysql.com/` и устанавливаем MySQL 8.0:
+```
+- name: Install mysql repo
+  yum:
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm
+    state: present
+
+- name: Import a key from a url
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+
+- name: Install mysql server
+  yum:
+    name:
+      - mysql-community-server
+      - MySQL-python
+    state: present
+  notify: Restart mysql
+```
 
 Чтобы настроить репликацию меняем id сервера и включаем режим `gtid_mode = ON` (глобальные идентификаторы транзакции).
 Конфигурационные файлы обоих серверов соответственно:
@@ -182,6 +201,7 @@ server-id = 2
 [Как создать надежный SSL-сертификат для локальной разработки](https://medium.com/nuances-of-programming/%D0%BA%D0%B0%D0%BA-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%B2%D0%B0%D1%82%D1%8C-%D0%BD%D0%B0%D0%B4%D0%B5%D0%B6%D0%BD%D1%8B%D0%B5-ssl-%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D1%8B-%D0%B4%D0%BB%D1%8F-%D0%BB%D0%BE%D0%BA%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D0%B9-%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B8-8f73f76df3d4)
 
 Воспользуемся инструкцией и создадим самоподписанный SSL сертификат для настройки HTTPS соединения между Пользователями - Proxy - Web.
+
 Файлы сертификата (`localhost.crt`, `localhost.key`) разместим в директориях NGINX `/etc/nginx/ssl` и Apache `/etc/httpd/ssl` соответственно.
 NGINX будет слушать на порту 80 и 443, при необходимости перенаправляя весь трафик на 443 порт (https):
 ```
