@@ -47,7 +47,7 @@
     reload: yes
   with_dict: "{{ sysctl_params }}"
 
-- name: firewalld start & enable
+- name: Firewalld start & enable
   service:
     name: firewalld
     state: started

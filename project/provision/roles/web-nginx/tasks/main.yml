@@ -15,7 +15,7 @@
     - http
     - https
 
-- name: firewalld reload
+- name: Firewalld reload
   shell: firewall-cmd --reload
 
 - name: Install nginx

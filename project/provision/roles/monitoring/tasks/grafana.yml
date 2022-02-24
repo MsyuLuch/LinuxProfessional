@@ -8,7 +8,7 @@
         state: enabled
       loop: [ '3000/tcp']
 
-- name: firewalld reload
+- name: Firewalld reload
   shell: firewall-cmd --reload
 
 # - name: Allow ports in SELinux

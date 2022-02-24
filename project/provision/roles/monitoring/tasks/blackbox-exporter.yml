@@ -8,16 +8,16 @@
         state: enabled
       loop: [ '9115/tcp' ]
 
-- name: firewalld reload
+- name: Firewalld reload
   shell: firewall-cmd --reload
 
-- name: create blackbox_exporter system group
+- name: Create blackbox_exporter system group
   group:
     name: blackbox-exp
     system: true
     state: present
 
-- name: create blackbox_exporter system user
+- name: Create blackbox_exporter system user
   user:
     name: blackbox-exp
     system: true
@@ -25,7 +25,7 @@
     group: blackbox-exp
     createhome: false
 
-- name: download blackbox exporter binary to local folder
+- name: Download blackbox exporter binary to local folder
   become: false
   unarchive:
     src: "https://github.com/prometheus/blackbox_exporter/releases/download/v{{ blackbox_exporter_version }}/blackbox_exporter-{{ blackbox_exporter_version }}.linux-{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}.tar.gz"
@@ -39,7 +39,7 @@
   delegate_to: localhost
   check_mode: false
 
-- name: propagate blackbox exporter binary
+- name: Propagate blackbox exporter binary
   copy:
     src: "/tmp/blackbox_exporter-{{ blackbox_exporter_version }}.linux-{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}/blackbox_exporter"
     dest: "/usr/local/bin/blackbox_exporter"
@@ -49,7 +49,7 @@
   notify:
     - restart blackbox exporter
 
-- name: create systemd service unit
+- name: Create systemd service unit
   template:
     src: blackbox_exporter.service.j2
     dest: /etc/systemd/system/blackbox_exporter.service
@@ -59,7 +59,7 @@
   notify:
     - restart blackbox exporter
 
-- name: configure blackbox exporter
+- name: Configure blackbox exporter
   template:
     src: blackbox_exporter.yml.j2
     dest: /etc/blackbox_exporter.yml
@@ -69,7 +69,7 @@
   notify:
     - reload blackbox exporter
 
-- name: ensure blackbox_exporter service is started and enabled
+- name: Ensure blackbox_exporter service is started and enabled
   become: true
   systemd:
     daemon_reload: true

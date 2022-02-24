@@ -8,7 +8,7 @@
         state: enabled
       loop: [ '5601/tcp']
 
-- name: firewalld reload
+- name: Firewalld reload
   shell: firewall-cmd --reload
   
 - name: Install kibana

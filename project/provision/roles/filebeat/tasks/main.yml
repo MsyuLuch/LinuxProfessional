@@ -8,7 +8,7 @@
         state: enabled
       loop: [ '9100/tcp']    
 
-- name: firewalld reload
+- name: Firewalld reload
   shell: firewall-cmd --reload      
 
 - name: Install the public signing key
