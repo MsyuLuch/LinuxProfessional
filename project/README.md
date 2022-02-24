@@ -1201,6 +1201,6 @@ sysctl -w net.ipv4.tcp_wmem="4096 65536 16777216"
 - настроить проксирование запросов к grafana, kibana через прокси сервер
 - изменить конфигурацию сети, согласно следующей схеме
 
-![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema1.jpg)
+![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema2.jpg)
 
 </details>
