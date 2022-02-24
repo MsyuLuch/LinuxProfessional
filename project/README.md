@@ -26,8 +26,8 @@
 - proxy
 - web
 - nfs
-- mysql primary
-- mysql secondary
+- mysql master
+- mysql replica
 - monitoring
 - elk
 
