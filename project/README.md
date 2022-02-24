@@ -21,7 +21,6 @@
 # **Описание процесса выполнения**
 
 ![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema3.jpg)
-![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema1.jpg)
 
 Проект включает следующие виртуальные машины:
 - proxy
