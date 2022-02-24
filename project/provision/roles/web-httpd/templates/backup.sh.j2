@@ -3,10 +3,10 @@ echo "==========================================================================
 date
 NOW=$(date +"%Y-%m-%d-%H%M")
 FILE="{{ virtual_domain }}.$NOW.tar"
-BACKUP_DIR="{{ mount_directory }}"
+BACKUP_DIR="{{ mount_directory_web }}"
 WWW_DIR="{{ wordpress_directory }}"
 
-WWW_TRANSFORM='s,^{{ wordpress_directory }},{{ virtual_domain }},'
+WWW_TRANSFORM='s,^{{ wordpress_directory }},wordpress,'
 
 tar -cf $BACKUP_DIR/$FILE --absolute-names --transform $WWW_TRANSFORM $WWW_DIR > /dev/null
 

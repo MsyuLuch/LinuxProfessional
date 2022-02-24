@@ -20,11 +20,12 @@
 
 # **Описание процесса выполнения**
 
-![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema.jpg)
+![schema](https://github.com/MsyuLuch/LinuxProfessional/blob/main/project/image/schema3.jpg)
 
-Проект состоит из 6 виртуальных машин:
+Проект включает следующие виртуальные машины:
 - proxy
 - web
+- nfs
 - mysql primary
 - mysql secondary
 - monitoring
@@ -125,12 +126,13 @@ firewall-cmd --list-all
 
 <details><summary>Установка и настройка MySQL</summary>
 
-Развернем два сервера баз данных: primary и secondary. Настроим между ними репликацию.
+Развернем два сервера баз данных: master и replica. Настроим между ними репликацию, в режиме Primary - Secondary.
 Подключаем репозиторий `https://repo.mysql.com/` и устанавливаем MySQL 8.0
 
 Чтобы настроить репликацию меняем id сервера и включаем режим `gtid_mode = ON` (глобальные идентификаторы транзакции).
 Конфигурационные файлы обоих серверов соответственно:
-primary
+
+master
 ```
 [mysqld]
 bind-address = {{ master_server_ip }}
@@ -146,7 +148,7 @@ log-error=/var/log/mysqld.log
 replicate-do-db=wordpress
 ```
 
-secondary
+replica
 ```
 [mysqld]
 bind-address = {{ replica_server_ip }}
@@ -167,7 +169,7 @@ server-id = 2
 
 Воспользуемся инструкцией и создадим самоподписанный SSL сертификат для настройки HTTPS соединения между Пользователями - Proxy - Web.
 Файлы сертификата (`localhost.crt`, `localhost.key`) разместим в директориях NGINX `/etc/nginx/ssl` и Apache `/etc/httpd/ssl` соответственно.
-NGINX будет слушать на порту 80 и 443, перенаправляя весь трафик на 443 порт (https):
+NGINX будет слушать на порту 80 и 443, при необходимости перенаправляя весь трафик на 443 порт (https):
 ```
 server {
         listen 80;
@@ -218,11 +220,11 @@ server {
 </VirtualHost>
 ```
 
-### ***Настройка Wordpress***
-Скачиваем с официального сайта wordpress последнюю версию проекта, разархивируем файлы в рабочую директорию.
+### ***Настройка WordPress***
+Скачиваем с официального сайта WordPress последнюю версию проекта, разархивируем файлы в рабочую директорию.
 До начала работы проекта, необходимо создать базу данных `Wordpress`.
 
-В конфигурационный файл wordpress `wp-config.php` добавим строки, определяющие работу по https протоколу:
+В конфигурационный файл WordPress `wp-config.php` добавим строки, принудительно переводя проект на работу по https протоколу:
 ```
 if($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'){
 
@@ -245,7 +247,8 @@ define('WP_SITEURL','https://{{ virtual_domain }}/');
 # устанавливаем NFS сервер
 yum install nfs-utils -y
 ```
-Создаем на сервере две директории, где будем хранить резервные копии веб-сайта и базы данных.
+
+Создадим на сервере две директории, где будем хранить резервные копии веб-сайта и базы данных.
 Редактируем конфигурационный файл `/etc/exports`, разрешая монтировать директории:
 ```
 - name: Add exports param
@@ -258,7 +261,7 @@ yum install nfs-utils -y
     - "{{ share_directory_web }}"
 ```  
 
-Скрипты резервного копирования будут запускаться по cron и записывать результаты выполнения команды в log файл (дополнительно настраиваем logrotate):
+Скрипты резервного копирования будут запускаться по cron и записывать результаты выполнения команды в log файл (дополнительно настраиваем logrotate с нужными параметрами ротации логов):
 ```
 - name: Add backup task in cron
   lineinfile:
@@ -266,12 +269,11 @@ yum install nfs-utils -y
     line: '*/20  *  *  *  *  root  /opt/backup.sh >> /var/log/my-app/backup.log 2>&1'  
 ```
 
-Копии базы данных будем снимать с secondary сервера. 
+Копии базы данных будем снимать с Master сервера. 
 Mysqldump будем выполнять со следующими параметрами:
 ```
-- single-transaction 
-- lock-tables 
-- routines
+- single-transaction - флаг запускает транзакцию перед запуском. Вместо того, чтобы блокировать всю базу данных, это позволит mysqldump прочитать базу данных в текущем состоянии во время транзакции, создавая непротиворечивый дамп данных.
+- set-gtid-purged=ON - указывает то, что используется репликация на основе глобальных идентификаторов GTID.
 ```
 
 Скрипт для создания резервных копий базы данных:
@@ -280,14 +282,18 @@ Mysqldump будем выполнять со следующими парамет
 echo "===================================================================================================="
 date
 NOW=$(date +"%Y-%m-%d-%H%M")
-BACKUP_DIR="{{ mount_directory }}"
+BACKUP_DIR="{{ mount_directory_db }}"
 
 DB_USER="root"
 DB_PASS="{{ mysql_root_password }}"
 DB_NAME="{{ mysql_db }}"
 DB_FILE="{{ virtual_domain }}.$NOW.sql"
 
-mysqldump -u$DB_USER -p$DB_PASS --single-transaction --lock-tables --routines --databases $DB_NAME | gzip > $BACKUP_DIR/$DB_FILE.gz
+# Вариант создания резервной копии только одной базы данных, с указанием использования репликации
+mysqldump -u$DB_USER -p$DB_PASS --single-transaction --set-gtid-purged=ON --databases $DB_NAME > $BACKUP_DIR/$DB_FILE
+
+# Вариант создания полной резервной копии всех баз данных, с отключением опции репликации
+# mysqldump -u$DB_USER -p$DB_PASS --set-gtid-purged=OFF --all-databases --triggers --routines --events > $BACKUP_DIR/$DB_FILE
 
 if [[ $? -gt 0 ]];then
 echo "ERROR: Aborted. Copying the database failed."
@@ -300,6 +306,8 @@ echo "Copy the database successfull."
 echo "======================================================================================================"
 echo -en '\n'
 ```
+Так как существует репликация и включен режим `GTID = ON` наиболее простой способ восстановить БД - развернуть Master (и Replica) с нуля с параметром `backup_flag = true`, 
+описанным в общем файле `var.yml`. 
 
 Копии frontend`а сайта снимаем с веб-сервера.
 Создаем архив папки, дополнительно изменяя вложенность папок в архиве (специфика выполнения команды tar)
@@ -310,10 +318,10 @@ echo "==========================================================================
 date
 NOW=$(date +"%Y-%m-%d-%H%M")
 FILE="{{ virtual_domain }}.$NOW.tar"
-BACKUP_DIR="{{ mount_directory }}"
+BACKUP_DIR="{{ mount_directory_web }}"
 WWW_DIR="{{ wordpress_directory }}"
 
-WWW_TRANSFORM='s,^{{ wordpress_directory }},{{ virtual_domain }},'
+WWW_TRANSFORM='s,^{{ wordpress_directory }},wordpress,'
 
 tar -cf $BACKUP_DIR/$FILE --absolute-names --transform $WWW_TRANSFORM $WWW_DIR > /dev/null
 
@@ -329,16 +337,179 @@ echo "==========================================================================
 echo -en '\n'
 ```
 
+Для восстановления данных из резервной копии написана дополнительная роль `playbook-backup-web.yml`. Роль можно 
+запустить с полным восстановлением веб сервера, а можно только частично, восстанавливая лишь содержимое директории, где хранится сайт.
+Переменные необходимы для работы роли, хранятся в общем файле `var.yml`. 
+```
+- name: Restore web site
+  hosts: web
+  become: true
+  vars_files:
+    - vars.yml  
+  tasks:
+      - name: Recursively remove directory
+        file:
+          path: "{{ wordpress_directory }}"
+          state: absent
+
+      - name: Unpack files
+        become: true
+        unarchive:
+          src: "{{ mount_directory_web }}/{{ backup_web_name }}"
+          dest: "{{ wordpress_install_directory }}"
+          remote_src: yes
+
+      - name: Setting ownership
+        become: true      
+        file:
+          path: "{{ wordpress_directory }}"
+          owner: apache
+          group: apache
+          recurse: true
+          mode: '0775' 
+
+```
 </details>
 
 
 <details><summary>Установка и настройка мониторинга</summary>
 
+Prometheus система мониторинга с открытым исходным кодом, он предоставляет десятки разных экспортеров, с помощью которых можно за считанные минуты настроить мониторинг всей инфраструктуры.
+Prometheus — это база данных временных рядов.
+
+```
+# Prometheus
+192.168.3.206:9090
+```
+
+В качестве экспортера выбран Node exporter, который установлен на каждом из узлов, которые необходимо мониторить. Prometheus забирает метрики у Node exporter на порту 9100.
+Посмотреть метрики в текстовом виде можно:
+
+```
+# Node exporter Proxy
+192.168.3.201:9100
+
+# Node exporter Web
+192.168.3.202:9100
+```
+
+Blackbox экспортер для Prometheus позволяет реализовать мониторинг внешних сервисов через HTTP, HTTPS, DNS, TCP, ICMP. 
+
+```
+# Blackbox exporter
+192.168.3.206:9115
+```
+ 
+Grafana - это платформа с открытым исходным кодом для визуализации, мониторинга и анализа данных.
+В данном случае она замечательно справляется с визуализацией данных, которые собрал Prometheus.
+
+```
+# Grafana
+192.168.3.206:3000
+```
+ 
 </details>
 
 
 <details><summary>Установка и настройка логирования</summary>
+Инфраструктура ELK включает следующие компоненты [2]:
 
+Elasticsearch (ES) – масштабируемая утилита полнотекстового поиска и аналитики, которая позволяет быстро в режиме реального времени хранить, искать и анализировать большие объемы данных. Как правило, ES используется в качестве NoSQL-базы данных для приложений со сложными функциями поиска. Elasticsearch основана на библиотеке Apache Lucene, предназначенной для индексирования и поиска информации в любом типе документов. В масштабных Big Data системах несколько копий Elasticsearch объединяются в кластер [4].
+
+Logstash — средство сбора, преобразования и сохранения в общем хранилище событий из файлов, баз данных, логов и других источников в реальном времени.  Logsatsh позволяет модифицировать полученные данные с помощью фильтров: разбить строку на поля, обогатить или их, агрегировать несколько строк, преобразовать их в JSON-документы и пр. Обработанные данные Logsatsh отправляет в системы-потребители. 
+
+Kibana – визуальный инструмент для Elasticsearch, чтобы взаимодействовать с данными, которые хранятся в индексах ES. Веб-интерфейс Kibana позволяет быстро создавать и обмениваться динамическими панелями мониторинга, включая таблицы, графики и диаграммы, которые отображают изменения в ES-запросах в реальном времени. Примечательно, что изначально Kibana была ориентирована на работу с Logstash, а не на Elasticsearch. Однако, с интеграцией 3-х систем в единую ELK-платформу, Kibana стала работать непосредственно с ES [4].
+
+FileBeat – агент на серверах для отправки различных типов оперативных данных в Elasticsearch.
+
+FileBeat установлен на каждом узле сети, забирает данные из log файлов `message`, `audit`, `nginx`, `httpd`, `mysql` и отправляет эти данные на сервер логирования `elk:5044`:
+```
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+      - /var/log/httpd/*_access.log
+  fields:
+    type: httpd_access
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/httpd/*_error.log
+  fields:
+    type: httpd_error
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/nginx/*_access.log
+  fields:
+    type: nginx_access
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/nginx/*_error.log
+  fields:
+    type: nginx_error
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/messages
+  fields:
+    type: syslog
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/audit/audit.log
+  fields:
+    type: audit
+  fields_under_root: true
+  scan_frequency: 5s
+
+- type: log
+  enabled: true
+  paths:
+      - /var/log/mysqld.log
+  fields:
+    type: mysql
+  fields_under_root: true
+  scan_frequency: 5s
+
+output.logstash:
+  hosts: ["{{ elk_server_ip }}:5044"]
+```
+
+На сервере `elk` на порту 5044 слушает `logstash`, который парсит логи с помощью `grok` фильтра и записывает в базу данных `Elasticsearch`:
+```
+filter {
+ if [type] == "nginx_access" {
+    grok {
+        match => { "message" => "%{IPORHOST:remote_ip} - %{DATA:user} \[%{HTTPDATE:access_time}\] \"%{WORD:http_method} %{DATA:url} HTTP/%{NUMBER:http_version}\" %{NUMBER:response_code} %{NUMBER:body_sent_bytes} \"%{DATA:referrer}\" \"%{DATA:agent}\"" }
+    }
+  }
+  date {
+        match => [ "timestamp" , "dd/MMM/YYYY:HH:mm:ss Z" ]
+  }
+}
+```
+
+Визуализацию данных можно увидеть в Kibana:
+```
+192.168.3.207:5601
+```
 </details>
 
 <details><summary>Sysctl настройки параметров узлов сети</summary>
@@ -367,12 +538,12 @@ sysctl -p /etc/sysctl.conf
 cat /proc/sys/net/ipv4/ip_forward
 sysctl net.ipv4.ip_forward
 ```
-
+------------------------------
 + net.ipv4.conf.all.accept_redirects = 0
 + net.ipv4.conf.all.secure_redirects = 0
 + net.ipv4.conf.all.send_redirects = 0
 
-Этими тремя параметрами мы запрещаем принимать и отправлять ICMP пакеты перенаправления. ICMP-перенаправления могут быть использованы злоумышленником для изменения таблиц маршрутизации.
+Этими тремя параметрами мы запрещаем принимать и отправлять ICMP пакеты перенаправления.
 
 Подробное описание:
 `accept_redirects`: - BOOLEAN
@@ -409,12 +580,14 @@ cat /proc/sys/net/ipv4/conf/all/send_redirects
 1
 ```
 
-Но, так как наш сервер не маршрутизатор, в них нет необходимости:
+Для сервера:
 ```
 sysctl -w net.ipv4.conf.all.accept_redirects=0
 sysctl -w net.ipv4.conf.all.secure_redirects=0
 sysctl -w net.ipv4.conf.all.send_redirects=0
 ```
+
+------------------------------
 
 + net.ipv4.tcp_orphan_retries = 0
 
@@ -433,13 +606,13 @@ cat /proc/sys/net/ipv4/tcp_orphan_retries
 sysctl -w net.ipv4.tcp_orphan_retries=0
 ```
 
-+ net.ipv4.conf.all.rp_filter = 1
+------------------------------
 
-Параметр, который включает фильтр обратного пути, проще говоря активируется защита от подмены адресов (спуфинга).
++ net.ipv4.conf.all.rp_filter = 1
 
 Подробное описание:
 
-Включает/выключает reverse path filter (проверка обратного адреса хотя это слишком вольный перевод термина, но мне он кажется наиболее близким по смыслу. прим. перев.) для заданного интерфейса. Смысл этой переменной достаточно прост все что поступает к нам проходит проверку на соответствие исходящего адреса с нашей таблицей маршрутизации и такая проверка считается успешной, если принятый пакет предполагает передачу ответа через тот же самый интерфейс. Если вы используете расширенную маршрутизацию тем или иным образом, то вам следует всерьез задуматься о выключении этой переменной, поскольку она может послужить причиной потери пакетов. Например, в случае, когда входящий трафик идет через один маршрутизатор, а исходящий через другой. Так, WEB-сервер, подключенный через один сетевой интерфейс к входному роутеру, а через другой к выходному (в случае, когда включен rp_filter), будет просто терять входящий трафик, поскольку обратный маршрут, в таблице маршрутизации, задан через другой интерфейс. Переменная может иметь два значения 0 (выключено) и 1 (включено). Значение по-умолчанию 0 (выключено). Однако в некоторых дистрибутивах по-умолчанию эта переменная включается в стартовых скриптах на этапе загрузки. Поэтому, если у вас эта переменная включена, а вам надо ее выключить просмотрите стартовые скрипты в каталоге rc.d. Более детальную информацию об этой переменной вы найдете в RFC 1812 — Requirements for IP Version 4 Routers на страницах 46-49 (секция 4.2.2.11), странице 55 (секция 4.3.2.7) и странице 90 (секция 5.3.3.3). Если вы всерьез занимаетесь проблемами маршрутизации, то вам определенно придется изучить этот документ.
+Включает/выключает reverse path filter для заданного интерфейса. Смысл этой переменной достаточно прост все, что поступает к нам, проходит проверку на соответствие исходящего адреса с нашей таблицей маршрутизации и такая проверка считается успешной, если принятый пакет предполагает передачу ответа через тот же самый интерфейс. Если вы используете расширенную маршрутизацию тем или иным образом, то вам следует всерьез задуматься о выключении этой переменной, поскольку она может послужить причиной потери пакетов. Например, в случае, когда входящий трафик идет через один маршрутизатор, а исходящий через другой. Так, WEB-сервер, подключенный через один сетевой интерфейс к входному роутеру, а через другой к выходному (в случае, когда включен rp_filter), будет просто терять входящий трафик, поскольку обратный маршрут, в таблице маршрутизации, задан через другой интерфейс. Переменная может иметь два значения 0 (выключено) и 1 (включено). Значение по-умолчанию 0 (выключено). Однако в некоторых дистрибутивах по-умолчанию эта переменная включается в стартовых скриптах на этапе загрузки. Поэтому, если у вас эта переменная включена, а вам надо ее выключить просмотрите стартовые скрипты в каталоге rc.d. Более детальную информацию об этой переменной вы найдете в RFC 1812 — Requirements for IP Version 4 Routers на страницах 46-49 (секция 4.2.2.11), странице 55 (секция 4.3.2.7) и странице 90 (секция 5.3.3.3). Если вы всерьез занимаетесь проблемами маршрутизации, то вам определенно придется изучить этот документ.
 По умолчанию он отключен:
 ```
 cat /proc/sys/net/ipv4/conf/all/rp_filter
@@ -454,6 +627,8 @@ sysctl -w net.ipv4.conf.all.rp_filter=1
 ```
 sysctl -w net.ipv4.conf.eth0.rp_filter=1
 ```
+
+------------------------------
 
 + net.ipv4.conf.all.accept_source_route = 0
 
@@ -474,13 +649,15 @@ cat /proc/sys/net/ipv4/conf/all/accept_source_route
 0
 ```
 
-Но если она у вас почему-то включена - отключите, желательно на всех интерфейсах:
+Рекомендуемые параметры:
 ```
 sysctl -w net.ipv4.conf.all.accept_source_route=0
 sysctl -w net.ipv4.conf.lo.accept_source_route=0
 sysctl -w net.ipv4.conf.eth0.accept_source_route=0
 sysctl -w net.ipv4.conf.default.accept_source_route=0
 ```
+
+------------------------------
 
 + net.ipv4.tcp_rfc1337 = 1
 
@@ -498,6 +675,8 @@ cat /proc/sys/net/ipv4/tcp_rfc1337
 sysctl -w net.ipv4.tcp_rfc1337=1
 ```
 
+------------------------------
+
 + net.ipv4.tcp_max_tw_buckets = 720000
 
 Максимальное число сокетов, находящихся в состоянии TIME-WAIT одновременно. При превышении этого порога -- "лишний" сокет разрушается и пишется сообщение в системный журнал. Цель этой переменной -- предотвращение простейших разновидностей DoS-атак.
@@ -506,6 +685,8 @@ sysctl -w net.ipv4.tcp_rfc1337=1
 
 Внимание!	
 Вам не следует уменьшать значение этой переменной. Вместо этого, если начали поступать сообщения в системный журнал, ее следует увеличить, однако, это может потребовать наращивания памяти в системе.
+
+------------------------------
 
 + net.ipv4.ip_forward = 0
 
@@ -520,6 +701,8 @@ cat /proc/sys/net/ipv4/ip_forward
 ```
 sysctl -w net.ipv4.ip_forward=0
 ```
+
+------------------------------
 
 + net.ipv4.icmp_echo_ignore_broadcasts = 1
 
@@ -536,6 +719,8 @@ cat /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1
 ```
 
+------------------------------
+
 + net.ipv4.icmp_echo_ignore_all = 1
 
 Отключаем ответ на ICMP запросы (сервер не будет пинговаться).
@@ -549,6 +734,8 @@ cat /proc/sys/net/ipv4/icmp_echo_ignore_all
 ```
 sysctl -w net.ipv4.icmp_echo_ignore_all=1
 ```
+
+------------------------------
 
 + net.ipv4.tcp_fin_timeout = 10
 
@@ -568,6 +755,8 @@ cat /proc/sys/net/ipv4/tcp_fin_timeout
 sysctl -w net.ipv4.tcp_fin_timeout=10
 ```
 
+------------------------------
+
 + net.ipv4.tcp_keepalive_time = 1800
 
 Проверять TCP-соединения, с помощью которой можно убедиться в том что на той стороне легальная машина, так как она сразу ответит.
@@ -585,6 +774,8 @@ cat /proc/sys/net/ipv4/tcp_keepalive_time
 ```
 sysctl -w net.ipv4.tcp_keepalive_time=60
 ```
+
+------------------------------
 
 + net.ipv4.tcp_keepalive_intvl = 15
 
@@ -604,6 +795,8 @@ cat /proc/sys/net/ipv4/tcp_keepalive_intvl
 sysctl -w net.ipv4.tcp_keepalive_intvl=15
 ```
 
+------------------------------
+
 + net.ipv4.tcp_keepalive_probes = 5
 
 Количество проверок перед закрытием соединения.
@@ -619,6 +812,8 @@ cat /proc/sys/net/ipv4/tcp_keepalive_probes
 sysctrl -w net.ipv4.tcp_keepalive_probes=5
 ```
 
+------------------------------
+
 + net.ipv4.tcp_max_syn_backlog = 4096
 
 Параметр, который определяет максимальное число запоминаемых запросов на соединение, для которых не было получено подтверждения от подключающегося клиента (полуоткрытых соединений).
@@ -633,6 +828,8 @@ cat /proc/sys/net/ipv4/tcp_max_syn_backlog
 ```
 sysctl -w net.ipv4.tcp_max_syn_backlog=4096
 ```
+
+------------------------------
 
 + tcp_syncookies:
 
@@ -652,6 +849,8 @@ sysctl -w net.ipv4.tcp_syncookies=0
 Таким образом, как описано выше, мы получаем неплохую защиту от syn флуда и терпим небольшую нагрузку на ЦП.
 Но согласно описанию, включать генерацию syncookies на высоконагруженных серверах, для которых этот механизм срабатывает, при большом количестве легальных соединений, не следует. Если в логах есть предупреждения о SYN-флуде, при этом это вполне нормальные соединения, нужно настраивать другие параметры: tcp_max_syn_backlog, tcp_synack_retries, tcp_abort_on_overflow.
 
+------------------------------
+
 + net.ipv4.tcp_synack_retries = 1
 
 Время удержания «полуоткрытых» соединений.
@@ -667,6 +866,8 @@ cat /proc/sys/net/ipv4/tcp_synack_retries
 sysctl -w net.ipv4.tcp_synack_retries=1
 ```
 
+------------------------------
+
 + net.ipv4.netfilter.ip_conntrack_max = 16777216
 
 Максимальное количество соединений для работы механизма connection tracking (используется, например, iptables).
@@ -679,6 +880,8 @@ cat /proc/sys/net/ipv4/netfilter/ip_conntrack_max
 ```
 sysctl -w net.ipv4.netfilter.ip_conntrack_max=16777216
 ```
+
+------------------------------
 
 + net.ipv4.tcp_timestamps = 1
 
@@ -698,6 +901,8 @@ cat /proc/sys/net/ipv4/tcp_timestamps
 sysctl -w net.ipv4.tcp_timestamps=1
 ```
 
+------------------------------
+
 + net.ipv4.tcp_sack = 1
 
 Разрешаем выборочные подтверждения протокола TCP. Опция необходима для эффективного использования всей доступной пропускной способности некоторых сетей.
@@ -716,6 +921,8 @@ cat /proc/sys/net/ipv4/tcp_sack
 sysctl -w net.ipv4.tcp_sack=1
 ```
 
+------------------------------
+
 + net.ipv4.tcp_fastopen = 1
 
 Включите TCP Fast Open (RFC7413), чтобы отправлять и принимать данные в открывающемся пакете SYN.
@@ -727,9 +934,13 @@ sysctl -w net.ipv4.tcp_sack=1
 По умолчанию: 0x1
 Обратите внимание, что дополнительные функции клиента или сервера эффективны только в том случае, если базовая поддержка (0x1 и 0x2) включена соответственно.
 
+------------------------------
+
 + net.ipv4.tcp_slow_start_after_idle = 1
 
 Размер окна перегрузки в MSS TCP-подключения после того, как оно было бездействующим (сегмент не получен) в течение одного тайм-аута повторной передачи (RTO).
+
+------------------------------
 
 + net.ipv4.tcp_congestion_control = htcp
 
@@ -757,6 +968,8 @@ cubic
 ```
 sysctl -w net.ipv4.tcp_congestion_control=htcp
 ```
+------------------------------
+
 
 + net.ipv4.tcp_no_metrics_save = 1
 Данная опция запрещает сохранять результаты изменений TCP соединения в кеше при его закрытии.
@@ -766,10 +979,12 @@ sysctl -w net.ipv4.tcp_congestion_control=htcp
 cat /proc/sys/net/ipv4/tcp_no_metrics_save
 0
 ```
-Так как это помогает повысить производительность, рекомендуется включить:
+Рекомендуется включить:
 ```
 sysctl -w net.ipv4.tcp_no_metrics_save=1
 ```
+
+------------------------------
 
 + net.ipv4.ip_local_port_range = 1024 65535
 
@@ -789,6 +1004,8 @@ cat /proc/sys/net/ipv4/ip_local_port_range
 sysctl -w net.ipv4.ip_local_port_range="1024 65535"
 ```
 
+------------------------------
+
 + net.ipv4.tcp_window_scaling = 1
 
 Опция позволяет динамически изменять размер окна TCP стека.
@@ -802,10 +1019,12 @@ cat /proc/sys/net/ipv4/tcp_window_scaling
 1
 ```
 
-Лучше так и оставить:
+Рекомендуется так и оставить:
 ```
 sysctl -w net.ipv4.tcp_window_scaling=1
 ```
+
+------------------------------
 
 + net.core.somaxconn = 65535
 
@@ -821,9 +1040,10 @@ cat /proc/sys/net/core/somaxconn
 sysctl -w net.core.somaxconn=15000
 ```
 
+------------------------------
+
 + net.core.netdev_max_backlog = 1000
 
-netdev_max_backlog:
 Параметр определяет максимальное количество пакетов в очереди на обработку, если интерфейс получает пакеты быстрее, чем ядро может их обработать.
 
 По умолчанию:
@@ -837,9 +1057,13 @@ cat /proc/sys/net/core/netdev_max_backlog
 sysctl -w net.core.netdev_max_backlog=1000
 ```
 
+------------------------------
+
 + fs.file-max = 64000
 
-устанавливает максимальное количество файловых дескрипторов, которые будет выделять ядро Linux. Обычно мы настраиваем этот файл, чтобы увеличить количество открытых файлов
+устанавливает максимальное количество файловых дескрипторов, которые будет выделять ядро Linux. 
+
+------------------------------
 
 + net.ipv4.tcp_mem = 50576 64768 98152
 
@@ -857,6 +1081,8 @@ cat /proc/sys/net/ipv4/tcp_mem
 96552 128739 193104
 ```
 Можно поставить эти же значения. увеличивать имеет смысл в случае увеличения нагрузки.
+
+------------------------------
 
 + net.ipv4.tcp_rmem = 4096 87380 16777216
 Векторная (минимум, режим нагрузки, максимум) переменная которая cодержит 3 целых числа, определяющих размер приемного буфера сокетов TCP.
@@ -876,6 +1102,8 @@ cat /proc/sys/net/ipv4/tcp_rmem
 ```
 sysctl -w net.ipv4.tcp_rmem="4096 87380 16777216"
 ```
+
+------------------------------
 
 + net.ipv4.tcp_wmem = 4096 65536 16777216
 

@@ -1,7 +1,8 @@
 [project]
-proxy ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
-web ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
-nfs ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
-master ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
-replica ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
-monitoring ansible_host=127.0.0.1 ansible_private_key_file=.vagrant/machines/primary/virtualbox/private_key
+replica ansible_host=127.0.0.1 ansible_port=2203 ansible_user='vagrant' ansible_ssh_private_key_file='/home/user/LinuxProfessional/project/.vagrant/machines/replica/virtualbox/private_key'
+monitoring ansible_host=127.0.0.1 ansible_port=2222 ansible_user='vagrant' ansible_ssh_private_key_file='/home/user/LinuxProfessional/project/.vagrant/machines/monitoring/virtualbox/private_key'
+web ansible_host=127.0.0.1 ansible_port=2205 ansible_user='vagrant' ansible_ssh_private_key_file='/home/user/LinuxProfessional/project/.vagrant/machines/web/virtualbox/private_key'
+nfs ansible_host=127.0.0.1 ansible_port=2202 ansible_user='vagrant' ansible_ssh_private_key_file='/home/user/LinuxProfessional/project/.vagrant/machines/nfs/virtualbox/private_key'
+master ansible_host=127.0.0.1 ansible_port=2201 ansible_user='vagrant' ansible_ssh_private_key_file='/home/user/LinuxProfessional/project/.vagrant/machines/master/virtualbox/private_key'
+proxy ansible_host=127.0.0.1 ansible_port=2204 ansible_user='vagrant' ansible_ssh_private_key_file='/home/user/LinuxProfessional/project/.vagrant/machines/proxy/virtualbox/private_key'
+elk ansible_host=127.0.0.1 ansible_port=2200 ansible_user='vagrant' ansible_ssh_private_key_file='/home/user/LinuxProfessional/project/.vagrant/machines/elk/virtualbox/private_key'

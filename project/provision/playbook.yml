@@ -26,7 +26,7 @@
     - node-exporter      
     - filebeat      
 
-- name: Install MySQL Master server
+- name: Install MySQL Replica server
   hosts: replica
   become: true
   vars_files:
@@ -36,11 +36,12 @@
     - node-exporter  
     - filebeat      
 
-# hosts: master
-# become: true
-# vars_files:
-#   - vars.yml  
-# task:
+# - name: Create database Wordpress
+#   hosts: master
+#   become: true
+#   vars_files:
+#     - vars.yml  
+#   tasks:
 #   - name: Create database Wordpress
 #     command: mysql -u root -p'{{ mysql_root_password }}' -e "CREATE DATABASE {{ mysql_db }};"
 
@@ -78,4 +79,5 @@
   vars_files:
     - vars.yml  
   roles:
-    - elk       
+    - elk  
+    - node-exporter          

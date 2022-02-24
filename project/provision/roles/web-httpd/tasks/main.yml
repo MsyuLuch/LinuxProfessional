@@ -25,12 +25,6 @@
     packages:
       - nfs-utils
 
-- name: Enable nfs
-  systemd:
-    name: httpd
-    state: restarted
-    enabled: yes      
-
 - name: Install Apache
   include_tasks: httpd.yml
 
@@ -39,19 +33,27 @@
 
 - name: Create BackupDirectory
   file:
-    path: "{{ mount_directory }}"
+    path: "{{ mount_directory_web }}"
     state: directory
     owner: "root"
     group: "root"
     mode: '0755'  
 
+- name: Mount an NFS volume
+  mount:
+    src: "{{ share_directory }}"
+    path: "{{ mount_directory_web }}"
+    opts: rw,sync
+    state: remounted
+    fstype: nfs    
+
 - name: mount backup directory
-  shell: mount {{ share_directory }} {{ mount_directory }}
+  shell: mount {{ share_directory }} {{ mount_directory_web }}
 
 - name: Add exports param
   lineinfile:
     path: /etc/fstab
-    line: '{{ share_directory }} {{ mount_directory }} nfs defaults 0 0'
+    line: '{{ share_directory }} {{ mount_directory_web }} nfs defaults 0 0'
 
 - name: Copy backup scripts
   template:

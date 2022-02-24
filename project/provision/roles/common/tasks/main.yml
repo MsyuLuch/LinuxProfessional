@@ -57,3 +57,32 @@
 - selinux:
     policy: targeted
     state: enforcing    
+
+
+- name: Add a user
+  user:
+   name: user
+   groups: wheel
+
+- name: Create user .ssh dir
+  file: 
+   path: /home/user/.ssh
+   owner: user
+   group: user
+   state: directory
+   mode: "0700"
+  become: true
+  become_user: user
+
+- name: Copy user public key
+  copy:
+    src: "{{ item }}"
+    dest: /home/user/.ssh/authorized_keys
+    owner: user
+    group: user
+    mode: "0600"
+  with_fileglob:
+    - files/*        
+
+- name: Enable sudo for user
+  shell: "echo %user ALL=NOPASSWD: ALL>>/etc/sudoers"

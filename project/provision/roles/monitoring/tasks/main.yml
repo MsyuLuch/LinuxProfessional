@@ -1,4 +1,7 @@
 ---
+- name: Install Blackbox-exporter
+  include_tasks: blackbox-exporter.yml
+
 - name: Install Prometheus
   include_tasks: prometheus.yml
 

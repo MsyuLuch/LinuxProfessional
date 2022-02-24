@@ -7,13 +7,30 @@ nfs_server_ip: 192.168.3.205
 monitoring_server_ip: 192.168.3.206
 elk_server_ip: 192.168.3.207
 
+# Наименование веб-проекта
 virtual_domain: web.myproject.com
 
+# Директории хранения резервных копий на сервере NFS
 share_directory_web: /srv/backups/web
 share_directory_db: /srv/backups/database
+# Директории хранения резервных копий на веб-сервере и сервере баз данных соответственно
+mount_directory_db: "/mnt/backups_database"
+mount_directory_web: "/mnt/backups_web"
+# Директория проекта
+wordpress_install_directory: "/var/www/{{ virtual_domain}}"
+wordpress_directory: "/var/www/{{virtual_domain}}/wordpress"
 
+# параметры для доступа к MySQL
 mysql_db: 'wordpress'
 mysql_user: 'wordpress'
 mysql_password: 'WordPress2022#'
+mysql_root_password: 'Replication2022#'
+
+# файлы, для восстановления из резервной копии
+backup_db_name: "web.myproject.com.2022-02-23-1546.sql"
+backup_web_name: "web.myproject.com.2022-02-23-1530.tar"
+
+backup_flag: false;
+
 
 

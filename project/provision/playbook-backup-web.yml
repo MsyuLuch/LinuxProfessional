@@ -1,0 +1,49 @@
+---
+# - hosts: all
+#   become: true
+#   vars_files:
+#     - vars.yml
+#   roles:
+#     - common
+
+# - name: Install web server
+#   hosts: web
+#   become: true
+#   vars_files:
+#     - vars.yml  
+#   roles:
+#     - web-httpd
+#     - node-exporter    
+#     - filebeat    
+
+- name: Restore web site
+  hosts: web
+  become: true
+  vars_files:
+    - vars.yml  
+  tasks:
+      - name: Recursively remove directory
+        file:
+          path: "{{ wordpress_directory }}"
+          state: absent
+
+      - name: unpack files
+        become: true
+        unarchive:
+          src: "{{ mount_directory_web }}/{{ backup_web_name }}"
+          dest: "{{ wordpress_install_directory }}"
+          remote_src: yes
+
+      - name: Setting ownership
+        become: true      
+        file:
+          path: "{{ wordpress_directory }}"
+          owner: apache
+          group: apache
+          recurse: true
+          mode: '0775'  
+
+
+
+  
+

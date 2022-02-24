@@ -24,12 +24,6 @@
     packages:
       - nfs-utils  
 
-- name: Enable nfs
-  systemd:
-    name: httpd
-    state: restarted
-    enabled: yes   
-
 - name: Install mysql repo
   yum:
     name: https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm
@@ -40,7 +34,8 @@
     state: present
     key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
 
-- name: Install mysql server
+
+- name: Install mysql server 
   yum:
     name: 
       - mysql-community-server
@@ -100,56 +95,3 @@
   
 - name: Start slave
   shell: mysql -u root -p'{{ mysql_root_password }}' -e 'START SLAVE;'
-
-- name: Create BackupDirectory
-  file:
-    path: "{{ mount_directory }}"
-    state: directory
-    owner: "root"
-    group: "root"
-    mode: '0755'  
-
-- name: mount backup directory
-  shell: mount {{ share_directory }} {{ mount_directory }}
-
-- name: Add exports param
-  lineinfile:
-    path: /etc/fstab
-    line: '{{ share_directory }} {{ mount_directory }} nfs defaults 0 0'  
-
-- name: Copy backup scripts
-  template:
-    src: "backup.sh.j2"
-    dest: "/opt/backup.sh"
-    owner: root
-    group: root
-    mode: u=rwx,g=r,o=r
-
-- name: Create log directory
-  file:
-    path: "/var/log/my-app/"
-    state: directory
-    owner: "root"
-    group: "root"
-    mode: '0755'
-
-- name: Create Backup log file
-  file:
-    path: "/var/log/my-app/backup.log"
-    state: touch    
-    owner: "root"
-    group: "root"
-    mode: '0644'    
-
-- name: Add backup task in cron
-  lineinfile:
-    path: /etc/crontab
-    line: '*/20  *  *  *  *  root  /opt/backup.sh >> /var/log/my-app/backup.log 2>&1'  
-
-- name: Conf logrotate backup log
-  template:
-    src: "my-app.j2"
-    dest: "/etc/logrotate.d/my-app"
-    owner: root
-    group: root
-    mode: u=rw,g=r,o=r    

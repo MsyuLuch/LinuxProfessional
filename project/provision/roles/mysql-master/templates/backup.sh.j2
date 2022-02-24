@@ -2,14 +2,17 @@
 echo "===================================================================================================="
 date
 NOW=$(date +"%Y-%m-%d-%H%M")
-BACKUP_DIR="{{ mount_directory }}"
+BACKUP_DIR="{{ mount_directory_db }}"
 
 DB_USER="root"
 DB_PASS="{{ mysql_root_password }}"
 DB_NAME="{{ mysql_db }}"
 DB_FILE="{{ virtual_domain }}.$NOW.sql"
 
-mysqldump -u$DB_USER -p$DB_PASS --single-transaction --lock-tables --routines --databases $DB_NAME | gzip > $BACKUP_DIR/$DB_FILE.gz
+
+mysqldump -u$DB_USER -p$DB_PASS --single-transaction --set-gtid-purged=ON --databases $DB_NAME > $BACKUP_DIR/$DB_FILE
+
+#mysqldump -u$DB_USER -p$DB_PASS --set-gtid-purged=OFF --all-databases --triggers --routines --events > $BACKUP_DIR/$DB_FILE
 
 if [[ $? -gt 0 ]];then
 echo "ERROR: Aborted. Copying the database failed."

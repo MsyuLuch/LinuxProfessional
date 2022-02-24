@@ -1,6 +1,3 @@
 ---
-
-mysql_root_password: 'Replication2022#'
-
 replication_user: replication_user
 replication_password: 'Replication2022#'
