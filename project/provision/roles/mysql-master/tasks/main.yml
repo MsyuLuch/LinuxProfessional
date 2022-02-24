@@ -160,14 +160,14 @@
 - name: Grant replication slave
   command: mysql -u root -p'{{ mysql_root_password }}' -e "GRANT ALL ON {{ mysql_db }}.* TO '{{ mysql_user }}'@'{{ web_server_ip }}';"
 
-- name: Create database Wordpress
-  hosts: master
-  become: true
-  vars_files:
-    - vars.yml
-  tasks:
-    - name: Create database Wordpress
-      command: mysql -u root -p'{{ mysql_root_password }}' -e "CREATE DATABASE {{ mysql_db }};"
+#- name: Create database Wordpress
+#  hosts: master
+#  become: true
+#  vars_files:
+#    - vars.yml
+#  tasks:
+#    - name: Create database Wordpress
+#      command: mysql -u root -p'{{ mysql_root_password }}' -e "CREATE DATABASE {{ mysql_db }};"
 
 # - name: Restore database dump
 #   command: mysql -u root -p'{{ mysql_root_password }}' {{ mysql_db }} < "{{ mount_directory_db }}/{{ backup_db_name }}"
